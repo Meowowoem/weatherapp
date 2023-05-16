@@ -28,8 +28,13 @@ class MainViewController: UIViewController {
     }
 
     private func setupNavigationBar() {
-        navigationItem.title = "Погода"
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.view.backgroundColor = UIColor.clear
+        
         let button = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonTapped(_:)))
+        button.tintColor = .white
         
         
         navigationItem.rightBarButtonItem = button
@@ -51,7 +56,8 @@ class MainViewController: UIViewController {
             NSLayoutConstraint.activate([
                 weatherView.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: view.frame.width * CGFloat(index)),
                 weatherView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-                weatherView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+                weatherView.topAnchor.constraint(equalTo: view.topAnchor),
+                weatherView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         }
         
@@ -62,7 +68,7 @@ class MainViewController: UIViewController {
         pageControl.currentPage = 0
         pageControl.tintColor = UIColor.red
         pageControl.pageIndicatorTintColor = .lightGray
-        pageControl.currentPageIndicatorTintColor = .systemMint
+        pageControl.currentPageIndicatorTintColor = .black
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .valueChanged)
         view.addSubview(pageControl)
     }

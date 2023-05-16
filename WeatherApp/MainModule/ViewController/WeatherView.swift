@@ -14,6 +14,7 @@ final class WeatherView: UIView {
     private var temperatureLabel: UILabel!
     private var conditionLabel: UILabel!
     private var humidityLabel: UILabel!
+    private var bgImageView: UIImageView!
     
     init(city: CityModel) {
         self.city = city
@@ -25,6 +26,11 @@ final class WeatherView: UIView {
     }
     
     public func setupViews() {
+        bgImageView = UIImageView()
+        bgImageView.image = UIImage(named: conditionFromValue(city.weather.condition))
+        bgImageView.contentMode = .scaleToFill
+        addSubview(bgImageView)
+        
         mainStackView = UIStackView()
         mainStackView.axis = .vertical
         mainStackView.alignment = .center
@@ -33,25 +39,25 @@ final class WeatherView: UIView {
         cityNameLabel = UILabel()
         cityNameLabel.text = city.name
         cityNameLabel.font = .systemFont(ofSize: 36, weight: .medium)
-        cityNameLabel.textColor = .systemGray
+        cityNameLabel.textColor = .black
         mainStackView.addArrangedSubview(cityNameLabel)
         
         temperatureLabel = UILabel()
         temperatureLabel.text = "\(city.weather.temperature)℃"
         temperatureLabel.font = .systemFont(ofSize: 96, weight: .bold)
-        temperatureLabel.textColor = .systemMint
+        temperatureLabel.textColor = .black
         mainStackView.addArrangedSubview(temperatureLabel)
         
         conditionLabel = UILabel()
-        conditionLabel.text = conditionFromValue(city.weather.condition)
+        conditionLabel.text = conditionFromValue(city.weather.condition).capitalized
         conditionLabel.font = .systemFont(ofSize: 24, weight: .medium)
-        conditionLabel.textColor = .systemGray
+        conditionLabel.textColor = .black
         mainStackView.addArrangedSubview(conditionLabel)
         
         humidityLabel = UILabel()
         humidityLabel.text = "Влажность: \(city.weather.humidity) %"
         humidityLabel.font = .systemFont(ofSize: 24, weight: .medium)
-        humidityLabel.textColor = .systemGray
+        humidityLabel.textColor = .black
         mainStackView.addArrangedSubview(humidityLabel)
         
         setupConstraints()
@@ -59,26 +65,29 @@ final class WeatherView: UIView {
     
     private func setupConstraints() {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
+        bgImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             mainStackView.leftAnchor.constraint(equalTo: leftAnchor),
             mainStackView.rightAnchor.constraint(equalTo: rightAnchor),
-            mainStackView.topAnchor.constraint(equalTo: topAnchor),
-            mainStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            mainStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            bgImageView.topAnchor.constraint(equalTo: topAnchor),
+            bgImageView.heightAnchor.constraint(equalTo: heightAnchor)
         ])
     }
     
     private func conditionFromValue(_ rawCondition: WeatherCondition) -> String {
         switch rawCondition {
         case .sunny:
-            return "Sunny"
+            return "sunny"
         case .cloudy:
-            return "Cloudy"
+            return "cloudy"
         case .windy:
-            return "Windy"
+            return "windy"
         case .rainy:
-            return "Rainy"
+            return "rainy"
         case .snowy:
-            return "Snowy"
+            return "snowy"
         }
     }
 }
