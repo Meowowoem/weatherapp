@@ -7,6 +7,6 @@
 
 import Foundation
 
-class MainViewModel {
+final class MainViewModel {
     
 }

@@ -16,6 +16,8 @@
 		20C3F0882A13E23B000E3DC2 /* WeatherAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F0872A13E23B000E3DC2 /* WeatherAppUITests.swift */; };
 		20C3F08A2A13E23B000E3DC2 /* WeatherAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F0892A13E23B000E3DC2 /* WeatherAppUITestsLaunchTests.swift */; };
 		20C3F09C2A13EAF7000E3DC2 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F09B2A13EAF7000E3DC2 /* MainViewModel.swift */; };
+		20C3F09E2A140634000E3DC2 /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F09D2A140634000E3DC2 /* WeatherView.swift */; };
+		20C3F0A02A1414D5000E3DC2 /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F09F2A1414D5000E3DC2 /* WeatherModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		20C3F0872A13E23B000E3DC2 /* WeatherAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAppUITests.swift; sourceTree = "<group>"; };
 		20C3F0892A13E23B000E3DC2 /* WeatherAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		20C3F09B2A13EAF7000E3DC2 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		20C3F09D2A140634000E3DC2 /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
+		20C3F09F2A1414D5000E3DC2 /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +151,7 @@
 		20C3F0982A13EAC8000E3DC2 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				20C3F09F2A1414D5000E3DC2 /* WeatherModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -163,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				20C3F06A2A13E23A000E3DC2 /* MainViewController.swift */,
+				20C3F09D2A140634000E3DC2 /* WeatherView.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -297,9 +303,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20C3F09E2A140634000E3DC2 /* WeatherView.swift in Sources */,
 				20C3F06B2A13E23A000E3DC2 /* MainViewController.swift in Sources */,
 				20C3F0672A13E23A000E3DC2 /* AppDelegate.swift in Sources */,
 				20C3F0692A13E23A000E3DC2 /* SceneDelegate.swift in Sources */,
+				20C3F0A02A1414D5000E3DC2 /* WeatherModel.swift in Sources */,
 				20C3F09C2A13EAF7000E3DC2 /* MainViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -476,7 +484,7 @@
 				INFOPLIST_FILE = WeatherApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIMainStoryboardFile = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -504,7 +512,7 @@
 				INFOPLIST_FILE = WeatherApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIMainStoryboardFile = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
