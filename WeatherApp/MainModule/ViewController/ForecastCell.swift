@@ -47,6 +47,10 @@ final class ForecastCell: UICollectionViewCell {
         setupConstraints()
     }
     
+    override func prepareForReuse() {
+        bgImageView.image = nil
+    }
+    
     private func setupConstraints() {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         bgImageView.translatesAutoresizingMaskIntoConstraints = false
