@@ -17,9 +17,10 @@ final class ForecastCell: UICollectionViewCell {
 
     public func setupViews(_ forecast: Forecast) {
         bgImageView.image = UIImage(named: conditionFromValue(forecast.condition))
+        contentView.backgroundColor = .green
         bgImageView.contentMode = .scaleAspectFill
         bgImageView.clipsToBounds = true
-        addSubview(bgImageView)
+        contentView.addSubview(bgImageView)
         
         mainStackView.axis = .vertical
         mainStackView.alignment = .center

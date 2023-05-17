@@ -86,7 +86,7 @@ final class MainViewController: UIViewController,
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
+
             loaderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             loaderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
@@ -105,7 +105,7 @@ final class MainViewController: UIViewController,
     private func searchButtonTapped(_ sender: UIBarButtonItem) {
         let searchVC = searchVC()
         searchVC.delegate = self
-        navigationController?.show(searchVC, sender: self)
+        show(searchVC, sender: self)
     }
 }
 
@@ -114,24 +114,24 @@ extension MainViewController: UICollectionViewDataSource,
                               UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCell", for: indexPath) as? ForecastCell else { return UICollectionViewCell() }
-        let forecast = forecast[indexPath.row]
+        let forecast = forecast[indexPath.item]
         cell.setupViews(forecast)
         
         return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return forecast.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return UIScreen.main.bounds.size
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
