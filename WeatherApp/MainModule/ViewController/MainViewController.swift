@@ -10,17 +10,21 @@ import UIKit
 class MainViewController: UIViewController {
     private var scrollView: UIScrollView!
     private var pageControl: UIPageControl!
+    private var loaderView: UIActivityIndicatorView!
     
-    private var cities = [
-        CityModel(name: "Moscow", weather: WeatherModel(temperature: 30, condition: .sunny, humidity: 55)),
-        CityModel(name: "Sochi", weather: WeatherModel(temperature: 35, condition: .sunny, humidity: 76)),
-        CityModel(name: "Ufa", weather: WeatherModel(temperature: 24, condition: .cloudy, humidity: 61)),
-        CityModel(name: "Tokyo", weather: WeatherModel(temperature: 16, condition: .rainy, humidity: 89))
-    ]
+    private var viewModel: MainViewModel!
+    private var forecast = [ForecastModel]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
+        
+        viewModel = MainViewModel()
+        
+        viewModel.getForecast { [weak self] in
+            guard let self = self else { return }
+            self.forecast = self.viewModel.forecast
+        }
         
         setupNavigationBar()
         setupViews()
@@ -41,14 +45,17 @@ class MainViewController: UIViewController {
     }
     
     private func setupViews() {
+        loaderView = UIActivityIndicatorView(style: .large)
+        view.addSubview(loaderView)
+        
         scrollView = UIScrollView()
         scrollView.delegate = self
         scrollView.isPagingEnabled = true
         scrollView.showsHorizontalScrollIndicator = false
         view.addSubview(scrollView)
         
-        for (index, city) in cities.enumerated() {
-            let weatherView = WeatherView(city: city)
+        for (index, forecast) in forecast.enumerated() {
+            let weatherView = ForecastView(forecast)
             weatherView.setupViews()
             scrollView.addSubview(weatherView)
             weatherView.translatesAutoresizingMaskIntoConstraints = false
@@ -64,7 +71,7 @@ class MainViewController: UIViewController {
         scrollView.contentSize = CGSize(width:view.frame.width * 4, height: 100)
         
         pageControl = UIPageControl()
-        pageControl.numberOfPages = cities.count
+        pageControl.numberOfPages = forecast.count
         pageControl.currentPage = 0
         pageControl.tintColor = UIColor.red
         pageControl.pageIndicatorTintColor = .lightGray
@@ -78,6 +85,8 @@ class MainViewController: UIViewController {
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         pageControl.translatesAutoresizingMaskIntoConstraints = false
+        loaderView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
             scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
@@ -85,7 +94,10 @@ class MainViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(window?.safeAreaInsets.bottom ?? 0)),
-            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            loaderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            loaderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
     

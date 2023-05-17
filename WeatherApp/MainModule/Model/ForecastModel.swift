@@ -7,12 +7,8 @@
 
 import Foundation
 
-struct CityModel {
-    let name: String
-    let weather: WeatherModel
-}
-
-struct WeatherModel {
+struct ForecastModel {
+    let cityName: String
     let temperature: Int
     let condition: WeatherCondition
     let humidity: Int
