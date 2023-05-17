@@ -30,11 +30,15 @@ enum WeatherCondition {
 }
 
 final class MainModel {
-    var forecast = [Forecast]()
+    public var networkService: Network
     
-    func getForecast(completion: @escaping ()->()) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            completion()
+    init(networkService: Network) {
+        self.networkService = networkService
+    }
+    
+    func getForecastForCurrentLocation(completion: @escaping (Result<ForecastJson, Error>) -> (Void)) {
+        networkService.fetchForecast(lat: 0, lon: 0) { result in
+            completion(result)
         }
     }
 }

@@ -9,11 +9,10 @@ import UIKit
 
 enum MainAssembly {
     static func make(networkService: Network) -> MainViewController {
-        let model = MainModel()
-        let vc = MainViewController {
+        let model = MainModel(networkService: networkService)
+        let vc = MainViewController(model: model, searchVC: {
             SearchAssembly.make(networkService: networkService)
-        }
-        vc.model = model
+        })
         
         return vc
     }

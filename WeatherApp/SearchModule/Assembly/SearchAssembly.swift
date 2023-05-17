@@ -9,10 +9,8 @@ import UIKit
 
 enum SearchAssembly {
     static func make(networkService: Network) -> SearchViewController {
-        let model = SearchModel()
-        model.networkService = networkService
-        let vc = SearchViewController()
-        vc.model = model
+        let model = SearchModel(networkService: networkService)
+        let vc = SearchViewController(model: model)
         return vc
     }
 }

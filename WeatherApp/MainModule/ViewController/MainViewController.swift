@@ -29,11 +29,13 @@ final class MainViewController: UIViewController,
         return loader
     }()
     
-    public var model: MainModel?
+    private var model: MainModel
     private let searchVC: () -> SearchViewController
     private var forecast = [Forecast]()
     
-    init(searchVC: @escaping () -> SearchViewController) {
+    init(model: MainModel,
+         searchVC: @escaping () -> SearchViewController) {
+        self.model = model
         self.searchVC = searchVC
         super.init(nibName: nil, bundle: nil)
     }
@@ -45,9 +47,9 @@ final class MainViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        model?.getForecast { [weak self] in
+        model.getForecastForCurrentLocation { [weak self] result in
             guard let self = self else { return }
-            self.forecast = self.model?.forecast ?? []
+//            self.forecast = self.model?.forecast ?? []
             self.loaderView.stopAnimating()
             self.collectionView.isHidden = false
             self.collectionView.reloadData()

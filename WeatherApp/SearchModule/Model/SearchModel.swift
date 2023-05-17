@@ -41,11 +41,15 @@ struct Condition: Decodable {
 
 
 final class SearchModel {
-    public var networkService: Network?
+    public var networkService: Network
+    
+    init(networkService: Network) {
+        self.networkService = networkService
+    }
     
     public func fetchCities(query: String,
                             completion: @escaping (Result<[City], Error>) -> (Void)) {
-        networkService?.fetchCities(query: query,
+        networkService.fetchCities(query: query,
                                     completion: { result in
             completion(result)
         })
@@ -53,7 +57,7 @@ final class SearchModel {
     
     public func loadForecast(for city: City,
                              completion: @escaping (Result<ForecastJson, Error>) -> (Void)) {
-        networkService?.fetchForecast(lat: city.lat,
+        networkService.fetchForecast(lat: city.lat,
                                       lon: city.lon,
                                       completion: { result in
             completion(result)
