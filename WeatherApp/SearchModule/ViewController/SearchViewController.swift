@@ -14,7 +14,7 @@ protocol SearchViewControllerDelegate: AnyObject {
 class SearchViewController: UIViewController {
     private let tableView: UITableView = {
         let table = UITableView(frame: .zero)
-        table.backgroundColor = .black
+        table.backgroundColor = .white
         return table
     }()
     

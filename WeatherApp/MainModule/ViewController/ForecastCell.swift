@@ -17,7 +17,6 @@ final class ForecastCell: UICollectionViewCell {
 
     public func setupViews(_ forecast: Forecast) {
         bgImageView.image = UIImage(named: conditionFromValue(forecast.condition))
-        contentView.backgroundColor = .green
         bgImageView.contentMode = .scaleAspectFill
         bgImageView.clipsToBounds = true
         contentView.addSubview(bgImageView)
@@ -69,12 +68,14 @@ final class ForecastCell: UICollectionViewCell {
             return "sunny"
         case .cloudy:
             return "cloudy"
-        case .windy:
-            return "windy"
+        case .overcast:
+            return "overcast"
         case .rainy:
             return "rainy"
         case .snowy:
             return "snowy"
+        case .undefined:
+            return "undefined"
         }
     }
 }

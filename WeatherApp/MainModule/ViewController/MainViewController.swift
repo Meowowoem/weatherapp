@@ -15,7 +15,7 @@ final class MainViewController: UIViewController,
         layout.scrollDirection = .horizontal
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.isPagingEnabled = true
-        collection.backgroundColor = .red
+        collection.backgroundColor = .white
         collection.isHidden = true
         collection.showsHorizontalScrollIndicator = false
         
@@ -24,7 +24,7 @@ final class MainViewController: UIViewController,
     
     private var loaderView: UIActivityIndicatorView = {
         let loader = UIActivityIndicatorView(style: .large)
-        loader.tintColor = .white
+        loader.tintColor = .systemGray
         loader.startAnimating()
         return loader
     }()
@@ -67,7 +67,7 @@ final class MainViewController: UIViewController,
         navigationController?.view.backgroundColor = UIColor.clear
         
         let button = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonTapped(_:)))
-        button.tintColor = .white
+        button.tintColor = .black
         
         
         navigationItem.rightBarButtonItem = button

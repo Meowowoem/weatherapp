@@ -18,14 +18,14 @@ class SearchResultCell: UITableViewCell {
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .white
         return label
     }()
     
     private let addButton: UIButton = {
         let button = UIButton()
         button.setTitle("Add", for: .normal)
-        button.setTitleColor(.gray, for: .highlighted)
+        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.lightGray, for: .highlighted)
         return button
     }()
     
@@ -35,10 +35,8 @@ class SearchResultCell: UITableViewCell {
         let nameString = name + ", " + country
         nameLabel.text = nameString
         stackView.addArrangedSubview(nameLabel)
-        stackView.isUserInteractionEnabled = true
         
         addButton.addTarget(self, action: #selector(addButtonPressed(_:)), for: .touchUpInside)
-        addButton.isUserInteractionEnabled = true
         stackView.addArrangedSubview(addButton)
         
         setupConstraints()
