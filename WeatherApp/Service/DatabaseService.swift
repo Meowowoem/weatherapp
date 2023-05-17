@@ -13,7 +13,7 @@ protocol Storage {
     func delete()
 }
 
-class RealmStorage: Storage {
+final class RealmStorage: Storage {
     func fetch() {
         
     }

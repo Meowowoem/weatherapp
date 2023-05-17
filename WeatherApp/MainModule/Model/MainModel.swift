@@ -1,15 +1,29 @@
 //
-//  MainViewModel.swift
+//  MainModel.swift
 //  WeatherApp
 //
-//  Created by Nikita Salnikov on 16.05.2023.
+//  Created by Nikita Salnikov on 17.05.2023.
 //
 
 import Foundation
 
-final class MainViewModel {
+struct Forecast {
+    let cityName: String
+    let temperature: Int
+    let condition: WeatherCondition
+    let humidity: Int
+}
+
+enum WeatherCondition {
+    case sunny
+    case cloudy
+    case windy
+    case rainy
+    case snowy
+}
+
+final class MainModel {
     var forecast = [Forecast]()
-    
     
     func getForecast(completion: @escaping ()->()) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

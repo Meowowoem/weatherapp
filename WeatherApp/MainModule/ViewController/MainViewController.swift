@@ -7,23 +7,32 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
-    private var scrollView: UIScrollView!
+final class MainViewController: UIViewController {
+    
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.isPagingEnabled = true
+        return collection
+    }()
+    
     private var pageControl: UIPageControl!
     private var loaderView: UIActivityIndicatorView!
     
-    private var viewModel: MainViewModel!
-    private var forecast = [ForecastModel]()
+    private var model: MainModel!
+    private var forecast = [Forecast]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
         
-        viewModel = MainViewModel()
+        model = MainModel()
         
-        viewModel.getForecast { [weak self] in
+        model.getForecast { [weak self] in
             guard let self = self else { return }
-            self.forecast = self.viewModel.forecast
+            self.forecast = self.model.forecast
+            self.collectionView.reloadData()
         }
         
         setupNavigationBar()
@@ -48,27 +57,10 @@ class MainViewController: UIViewController {
         loaderView = UIActivityIndicatorView(style: .large)
         view.addSubview(loaderView)
         
-        scrollView = UIScrollView()
-        scrollView.delegate = self
-        scrollView.isPagingEnabled = true
-        scrollView.showsHorizontalScrollIndicator = false
-        view.addSubview(scrollView)
-        
-        for (index, forecast) in forecast.enumerated() {
-            let weatherView = ForecastView(forecast)
-            weatherView.setupViews()
-            scrollView.addSubview(weatherView)
-            weatherView.translatesAutoresizingMaskIntoConstraints = false
-            
-            NSLayoutConstraint.activate([
-                weatherView.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: view.frame.width * CGFloat(index)),
-                weatherView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-                weatherView.topAnchor.constraint(equalTo: view.topAnchor),
-                weatherView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
-        }
-        
-        scrollView.contentSize = CGSize(width:view.frame.width * 4, height: 100)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(ForecastCell.self, forCellWithReuseIdentifier: "ForecastCell")
+        view.addSubview(collectionView)
         
         pageControl = UIPageControl()
         pageControl.numberOfPages = forecast.count
@@ -83,16 +75,16 @@ class MainViewController: UIViewController {
     private func setupConstraints() {
         let window = UIApplication.shared.connectedScenes.flatMap { ($0 as? UIWindowScene)?.windows ?? [] }.first { $0.isKeyWindow }
         
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         loaderView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
+            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
             pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(window?.safeAreaInsets.bottom ?? 0)),
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
@@ -108,13 +100,37 @@ class MainViewController: UIViewController {
     
     @objc
     func pageControlTapped(_ sender: UIPageControl) {
-        let ofsetX = CGFloat(pageControl.currentPage) * scrollView.frame.size.width
-        scrollView.setContentOffset(CGPoint(x: ofsetX, y: 0), animated: true)
+//        let ofsetX = CGFloat(pageControl.currentPage) * scrollView.frame.size.width
+//        scrollView.setContentOffset(CGPoint(x: ofsetX, y: 0), animated: true)
     }
     
 }
 
-extension MainViewController: UIScrollViewDelegate {
+extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCell", for: indexPath) as? ForecastCell else { return UICollectionViewCell() }
+        let forecast = forecast[indexPath.row]
+        cell.setupViews(Forecast(cityName: forecast.cityName, temperature: forecast.temperature, condition: forecast.condition, humidity: forecast.humidity))
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width, height: view.frame.height)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return forecast.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         pageControl.currentPage = Int(pageNumber)

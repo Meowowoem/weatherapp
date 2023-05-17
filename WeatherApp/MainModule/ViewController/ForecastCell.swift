@@ -1,5 +1,5 @@
 //
-//  WeatherView.swift
+//  ForecastCell.swift
 //  WeatherApp
 //
 //  Created by Nikita Salnikov on 16.05.2023.
@@ -7,54 +7,38 @@
 
 import UIKit
 
-final class ForecastView: UIView {
-    private var forecast: ForecastModel
-    private var mainStackView: UIStackView!
-    private var cityNameLabel: UILabel!
-    private var temperatureLabel: UILabel!
-    private var conditionLabel: UILabel!
-    private var humidityLabel: UILabel!
-    private var bgImageView: UIImageView!
-    
-    init(_ forecast: ForecastModel) {
-        self.forecast = forecast
-        super.init(frame: CGRect())
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    public func setupViews() {
-        bgImageView = UIImageView()
+final class ForecastCell: UICollectionViewCell {
+    private let mainStackView = UIStackView()
+    private let cityNameLabel = UILabel()
+    private let temperatureLabel = UILabel()
+    private let conditionLabel = UILabel()
+    private let humidityLabel = UILabel()
+    private let bgImageView = UIImageView()
+
+    public func setupViews(_ forecast: Forecast) {
         bgImageView.image = UIImage(named: conditionFromValue(forecast.condition))
         bgImageView.contentMode = .scaleToFill
         addSubview(bgImageView)
         
-        mainStackView = UIStackView()
         mainStackView.axis = .vertical
         mainStackView.alignment = .center
         addSubview(mainStackView)
         
-        cityNameLabel = UILabel()
         cityNameLabel.text = forecast.cityName
         cityNameLabel.font = .systemFont(ofSize: 36, weight: .medium)
         cityNameLabel.textColor = .black
         mainStackView.addArrangedSubview(cityNameLabel)
         
-        temperatureLabel = UILabel()
         temperatureLabel.text = "\(forecast.temperature)℃"
         temperatureLabel.font = .systemFont(ofSize: 96, weight: .bold)
         temperatureLabel.textColor = .black
         mainStackView.addArrangedSubview(temperatureLabel)
         
-        conditionLabel = UILabel()
         conditionLabel.text = conditionFromValue(forecast.condition).capitalized
         conditionLabel.font = .systemFont(ofSize: 24, weight: .medium)
         conditionLabel.textColor = .black
         mainStackView.addArrangedSubview(conditionLabel)
         
-        humidityLabel = UILabel()
         humidityLabel.text = "Humidity: \(forecast.humidity) %"
         humidityLabel.font = .systemFont(ofSize: 24, weight: .medium)
         humidityLabel.textColor = .black
