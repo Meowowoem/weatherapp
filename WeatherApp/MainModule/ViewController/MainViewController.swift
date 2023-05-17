@@ -7,7 +7,8 @@
 
 import UIKit
 
-final class MainViewController: UIViewController {
+final class MainViewController: UIViewController,
+                                SearchViewControllerDelegate {
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -17,8 +18,6 @@ final class MainViewController: UIViewController {
         collection.showsHorizontalScrollIndicator = false
         return collection
     }()
-    
-//    private var pageControl: UIPageControl!
     
     private var loaderView: UIActivityIndicatorView = {
         let loader = UIActivityIndicatorView(style: .large)
@@ -64,24 +63,11 @@ final class MainViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.register(ForecastCell.self, forCellWithReuseIdentifier: "ForecastCell")
         view.addSubview(collectionView)
-        
-//        pageControl = UIPageControl()
-//        pageControl.numberOfPages = forecast.count
-//        pageControl.currentPage = 0
-//        pageControl.tintColor = UIColor.red
-//        pageControl.pageIndicatorTintColor = .lightGray
-//        pageControl.currentPageIndicatorTintColor = .black
-//        pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .valueChanged)
-//        view.addSubview(pageControl)
-        
         view.addSubview(loaderView)
     }
     
     private func setupConstraints() {
-        let window = UIApplication.shared.connectedScenes.flatMap { ($0 as? UIWindowScene)?.windows ?? [] }.first { $0.isKeyWindow }
-        
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-//        pageControl.translatesAutoresizingMaskIntoConstraints = false
         loaderView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -89,34 +75,36 @@ final class MainViewController: UIViewController {
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
-//            pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(window?.safeAreaInsets.bottom ?? 0)),
-//            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             loaderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             loaderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
-    @objc
-    private func searchButtonTapped(_ sender: UIBarButtonItem) {
-        let searchVc = SearchAssembly().make()
-        navigationController?.pushViewController(searchVc, animated: true)
+    func addForecast(_ sender: SearchViewController, forecast: ForecastJson) {
+        self.forecast.append(Forecast(from: forecast))
+        collectionView.reloadData()
+        let indexPath = IndexPath(item: self.forecast.count - 1, section: 0)
+        collectionView.isPagingEnabled = false
+        collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
+        collectionView.isPagingEnabled = true
     }
     
-//    @objc
-//    func pageControlTapped(_ sender: UIPageControl) {
-////        let ofsetX = CGFloat(pageControl.currentPage) * scrollView.frame.size.width
-////        scrollView.setContentOffset(CGPoint(x: ofsetX, y: 0), animated: true)
-//    }
-    
+    @objc
+    private func searchButtonTapped(_ sender: UIBarButtonItem) {
+        guard let searchVc = SearchAssembly().make() as? SearchViewController else { return }
+        searchVc.delegate = self
+        navigationController?.pushViewController(searchVc, animated: true)
+    }
 }
 
-extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate {
+extension MainViewController: UICollectionViewDataSource,
+                              UICollectionViewDelegate,
+                              UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCell", for: indexPath) as? ForecastCell else { return UICollectionViewCell() }
         let forecast = forecast[indexPath.row]
-        cell.setupViews(Forecast(cityName: forecast.cityName, temperature: forecast.temperature, condition: forecast.condition, humidity: forecast.humidity))
+        cell.setupViews(forecast)
         
         return cell
     }
@@ -136,10 +124,5 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
-    
-//    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-//        let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
-//        pageControl.currentPage = Int(pageNumber)
-//    }
 }
 

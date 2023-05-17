@@ -51,11 +51,12 @@ final class SearchModel {
         })
     }
     
-    public func loadForecast(for city: City) {
+    public func loadForecast(for city: City,
+                             completion: @escaping (Result<ForecastJson, Error>) -> (Void)) {
         networkService?.fetchForecast(lat: city.lat,
                                       lon: city.lon,
                                       completion: { result in
-            
+            completion(result)
         })
     }
 }

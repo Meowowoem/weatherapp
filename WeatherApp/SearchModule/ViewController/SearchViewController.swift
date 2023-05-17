@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol SearchViewControllerDelegate: AnyObject {
+    func addForecast(_ sender: SearchViewController, forecast: ForecastJson)
+}
+
 class SearchViewController: UIViewController {
     private let tableView: UITableView = {
         let table = UITableView(frame: .zero)
@@ -28,6 +32,8 @@ class SearchViewController: UIViewController {
     ]
     
     public var model: SearchModel?
+    
+    weak var delegate: SearchViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +67,8 @@ class SearchViewController: UIViewController {
 
 }
 
-extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
+extension SearchViewController: UITableViewDelegate,
+                                UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell", for: indexPath) as? SearchResultCell else { return UITableViewCell() }
         let city = cities[indexPath.row]
@@ -76,7 +83,15 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let city = cities[indexPath.row]
-        model?.loadForecast(for: city)
+        model?.loadForecast(for: city, completion: { result in
+            switch result {
+            case .success(let value):
+                self.delegate?.addForecast(self, forecast: value)
+                self.navigationController?.popViewController(animated: true)
+            case .failure(_):
+                break
+            }
+        })
     }
 }
 
