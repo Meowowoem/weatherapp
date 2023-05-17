@@ -31,7 +31,7 @@ final class MainViewController: UIViewController,
     
     private var model: MainModel
     private let searchVC: () -> SearchViewController
-    private var forecast = [Forecast]()
+    private var forecasts = [Forecast]()
     
     init(model: MainModel,
          searchVC: @escaping () -> SearchViewController) {
@@ -49,10 +49,17 @@ final class MainViewController: UIViewController,
         
         model.getForecastForCurrentLocation { [weak self] result in
             guard let self = self else { return }
-//            self.forecast = self.model?.forecast ?? []
-            self.loaderView.stopAnimating()
-            self.collectionView.isHidden = false
-            self.collectionView.reloadData()
+            switch result {
+                
+            case .success(let forecast):
+                self.forecasts.append(Forecast(from: forecast))
+                self.loaderView.stopAnimating()
+                self.collectionView.isHidden = false
+                self.collectionView.reloadData()
+            case .failure(let error):
+                break
+            }
+
         }
         
         setupNavigationBar()
@@ -61,10 +68,6 @@ final class MainViewController: UIViewController,
     }
 
     private func setupNavigationBar() {
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.isTranslucent = true
-        navigationController?.view.backgroundColor = UIColor.clear
         
         let button = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonTapped(_:)))
         button.tintColor = .black
@@ -97,9 +100,9 @@ final class MainViewController: UIViewController,
     }
     
     func addForecast(_ sender: SearchViewController, forecast: ForecastJson) {
-        self.forecast.append(Forecast(from: forecast))
+        self.forecasts.append(Forecast(from: forecast))
         collectionView.reloadData()
-        let indexPath = IndexPath(item: self.forecast.count - 1, section: 0)
+        let indexPath = IndexPath(item: self.forecasts.count - 1, section: 0)
         collectionView.isPagingEnabled = false
         collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
         collectionView.isPagingEnabled = true
@@ -118,14 +121,14 @@ extension MainViewController: UICollectionViewDataSource,
                               UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCell", for: indexPath) as? ForecastCell else { return UICollectionViewCell() }
-        let forecast = forecast[indexPath.item]
+        let forecast = forecasts[indexPath.item]
         cell.setupViews(forecast)
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return forecast.count
+        return forecasts.count
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

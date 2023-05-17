@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct Forecast {
     let cityName: String
@@ -47,15 +48,21 @@ enum WeatherCondition {
     case undefined
 }
 
-final class MainModel {
-    public var networkService: Network
+final class MainModel: NSObject,
+                       CLLocationManagerDelegate {
+    private var networkService: Network
+    private var locationManager: LocationManager
     
-    init(networkService: Network) {
+    init(networkService: Network,
+         locationManager: LocationManager) {
         self.networkService = networkService
+        self.locationManager = locationManager
     }
     
     func getForecastForCurrentLocation(completion: @escaping (Result<ForecastJson, Error>) -> (Void)) {
-        networkService.fetchForecast(lat: 0, lon: 0) { result in
+        guard let location = locationManager.location else { return }
+        
+        networkService.fetchForecast(lat: location.coordinate.latitude, lon: location.coordinate.longitude) { result in
             completion(result)
         }
     }

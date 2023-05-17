@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import CoreLocation
 
 enum MainAssembly {
     static func make(networkService: Network) -> MainViewController {
-        let model = MainModel(networkService: networkService)
+        let model = MainModel(networkService: networkService,
+                              locationManager: LocationManager())
         let vc = MainViewController(model: model, searchVC: {
             SearchAssembly.make(networkService: networkService)
         })
