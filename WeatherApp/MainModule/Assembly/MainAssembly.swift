@@ -7,10 +7,12 @@
 
 import UIKit
 
-struct MainAssembly {
-    public func make() -> UIViewController {
+enum MainAssembly {
+    static func make(networkService: Network) -> MainViewController {
         let model = MainModel()
-        let vc = MainViewController()
+        let vc = MainViewController {
+            SearchAssembly.make(networkService: networkService)
+        }
         vc.model = model
         
         return vc

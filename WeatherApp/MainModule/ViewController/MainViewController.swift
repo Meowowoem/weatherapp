@@ -15,7 +15,9 @@ final class MainViewController: UIViewController,
         layout.scrollDirection = .horizontal
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.isPagingEnabled = true
+        collection.backgroundColor = .red
         collection.showsHorizontalScrollIndicator = false
+        
         return collection
     }()
     
@@ -27,11 +29,20 @@ final class MainViewController: UIViewController,
     }()
     
     public var model: MainModel?
+    private let searchVC: () -> SearchViewController
     private var forecast = [Forecast]()
-
+    
+    init(searchVC: @escaping () -> SearchViewController) {
+        self.searchVC = searchVC
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
         
         model?.getForecast { [weak self] in
             guard let self = self else { return }
@@ -73,7 +84,7 @@ final class MainViewController: UIViewController,
         NSLayoutConstraint.activate([
             collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             loaderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -92,9 +103,9 @@ final class MainViewController: UIViewController,
     
     @objc
     private func searchButtonTapped(_ sender: UIBarButtonItem) {
-        guard let searchVc = SearchAssembly().make() as? SearchViewController else { return }
-        searchVc.delegate = self
-        navigationController?.pushViewController(searchVc, animated: true)
+        let searchVC = searchVC()
+        searchVC.delegate = self
+        navigationController?.show(searchVC, sender: self)
     }
 }
 
@@ -110,7 +121,7 @@ extension MainViewController: UICollectionViewDataSource,
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: view.frame.height)
+        return CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

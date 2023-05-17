@@ -7,10 +7,10 @@
 
 import UIKit
 
-struct SearchAssembly {
-    public func make() -> UIViewController {
+enum SearchAssembly {
+    static func make(networkService: Network) -> SearchViewController {
         let model = SearchModel()
-        model.networkService = AlamofireService()
+        model.networkService = networkService
         let vc = SearchViewController()
         vc.model = model
         return vc

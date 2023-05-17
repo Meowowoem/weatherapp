@@ -142,8 +142,8 @@
 			isa = PBXGroup;
 			children = (
 				208AD8102A14D3230037D113 /* Model */,
-				208AD8082A14BBB30037D113 /* Assembly */,
 				208AD8042A14BB6F0037D113 /* ViewController */,
+				208AD8082A14BBB30037D113 /* Assembly */,
 			);
 			path = SearchModule;
 			sourceTree = "<group>";

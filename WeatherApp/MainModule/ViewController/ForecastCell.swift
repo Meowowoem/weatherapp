@@ -17,12 +17,13 @@ final class ForecastCell: UICollectionViewCell {
 
     public func setupViews(_ forecast: Forecast) {
         bgImageView.image = UIImage(named: conditionFromValue(forecast.condition))
-        bgImageView.contentMode = .scaleToFill
+        bgImageView.contentMode = .scaleAspectFill
+        bgImageView.clipsToBounds = true
         addSubview(bgImageView)
         
         mainStackView.axis = .vertical
         mainStackView.alignment = .center
-        addSubview(mainStackView)
+        bgImageView.addSubview(mainStackView)
         
         cityNameLabel.text = forecast.cityName
         cityNameLabel.font = .systemFont(ofSize: 36, weight: .medium)
@@ -47,10 +48,6 @@ final class ForecastCell: UICollectionViewCell {
         setupConstraints()
     }
     
-    override func prepareForReuse() {
-        bgImageView.image = nil
-    }
-    
     private func setupConstraints() {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         bgImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,6 +57,7 @@ final class ForecastCell: UICollectionViewCell {
             mainStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             
             bgImageView.topAnchor.constraint(equalTo: topAnchor),
+            bgImageView.widthAnchor.constraint(equalTo: widthAnchor),
             bgImageView.heightAnchor.constraint(equalTo: heightAnchor)
         ])
     }
