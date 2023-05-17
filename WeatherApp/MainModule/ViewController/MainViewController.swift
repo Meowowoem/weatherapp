@@ -16,6 +16,7 @@ final class MainViewController: UIViewController,
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.isPagingEnabled = true
         collection.backgroundColor = .red
+        collection.isHidden = true
         collection.showsHorizontalScrollIndicator = false
         
         return collection
@@ -48,6 +49,7 @@ final class MainViewController: UIViewController,
             guard let self = self else { return }
             self.forecast = self.model?.forecast ?? []
             self.loaderView.stopAnimating()
+            self.collectionView.isHidden = false
             self.collectionView.reloadData()
         }
         
@@ -70,11 +72,11 @@ final class MainViewController: UIViewController,
     }
     
     private func setupViews() {
+        view.addSubview(loaderView)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(ForecastCell.self, forCellWithReuseIdentifier: "ForecastCell")
         view.addSubview(collectionView)
-        view.addSubview(loaderView)
     }
     
     private func setupConstraints() {
@@ -86,9 +88,9 @@ final class MainViewController: UIViewController,
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
-            loaderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            loaderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            
+            loaderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loaderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
