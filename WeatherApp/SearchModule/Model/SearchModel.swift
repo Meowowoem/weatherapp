@@ -29,10 +29,14 @@ struct ForecastDay: Decodable {
 }
 
 struct HourForecast: Decodable {
-    let time_epoch: Double
-    let temp_c: Double
+    let timeEpoch: Double
+    let tempC: Double
     let humidity: Int
-    
+    let condition: Condition
+}
+
+struct Condition: Decodable {
+    let code: Int
 }
 
 

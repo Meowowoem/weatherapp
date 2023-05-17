@@ -21,26 +21,19 @@ final class AlamofireService: Network {
     
     func fetchCities(query: String,
                      completion: @escaping (Result<[City], Error>) -> (Void)) {
-        AF.request(createURLStringForCities(with: query))
+        AF.request(createURLStringForSearch(query))
             .validate()
-            .response { response in
-            guard let data = response.data else {
-                if let error = response.error {
-                completion(.failure(error))
+            .response { [weak self] response in
+                guard let self = self else { return }
+                guard let data = response.data else {
+                    if let error = response.error {
+                        completion(.failure(error))
+                    }
+                    return
                 }
-                return
+                
+                completion(self.decode(data))
             }
-            
-            let decoder = JSONDecoder()
-            guard let cities = try? decoder.decode([City].self, from: data) else {
-                if let error = response.error {
-                completion(.failure(error))
-                }
-                return
-            }
-            
-            completion(.success(cities))
-        }
     }
     
     func fetchForecast(lat: Double,
@@ -49,29 +42,21 @@ final class AlamofireService: Network {
         AF.request(createURLStringForForecast(lat: lat,
                                               lon: lon))
             .validate()
-            .response { response in
+            .response { [weak self] response in
+                guard let self = self else { return }
                 guard let data = response.data else {
                     if let error = response.error {
-                    completion(.failure(error))
+                        completion(.failure(error))
                     }
                     return
                 }
-                
-                let decoder = JSONDecoder()
-                guard let forecast = try? decoder.decode(ForecastJson.self, from: data) else {
-                    if let error = response.error {
-                    completion(.failure(error))
-                    }
-                    return
-                }
-                
-                completion(.success(forecast))
+                completion(self.decode(data))
             }
     }
 }
 
 private extension AlamofireService {
-    private func createURLStringForCities(with query: String) -> String {
+    private func createURLStringForSearch(_ query: String) -> String {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.weatherapi.com"
@@ -91,7 +76,7 @@ private extension AlamofireService {
         components.scheme = "https"
         components.host = "api.weatherapi.com"
         components.path = "/v1/forecast.json"
-
+        
         components.queryItems = [
             URLQueryItem(name: "key", value: key),
             URLQueryItem(name: "q", value: coordString),
@@ -99,5 +84,12 @@ private extension AlamofireService {
         ]
         
         return components.url?.absoluteString ?? ""
+    }
+    
+    func decode<T: Decodable>(_ data: Data) -> Result<T, Error> {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        guard let result = try? decoder.decode(T.self, from: data) else { return .failure(NSError(domain: "", code: 1)) }
+        return .success(result)
     }
 }
