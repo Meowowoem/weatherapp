@@ -18,21 +18,25 @@ final class MainViewController: UIViewController {
         return collection
     }()
     
-    private var pageControl: UIPageControl!
-    private var loaderView: UIActivityIndicatorView!
+//    private var pageControl: UIPageControl!
     
-    private var model: MainModel!
+    private var loaderView: UIActivityIndicatorView = {
+        let loader = UIActivityIndicatorView(style: .large)
+        loader.tintColor = .white
+        loader.startAnimating()
+        return loader
+    }()
+    
+    public var model: MainModel?
     private var forecast = [Forecast]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
         
-        model = MainModel()
-        
-        model.getForecast { [weak self] in
+        model?.getForecast { [weak self] in
             guard let self = self else { return }
-            self.forecast = self.model.forecast
+            self.forecast = self.model?.forecast ?? []
             self.loaderView.stopAnimating()
             self.collectionView.reloadData()
         }
@@ -61,18 +65,15 @@ final class MainViewController: UIViewController {
         collectionView.register(ForecastCell.self, forCellWithReuseIdentifier: "ForecastCell")
         view.addSubview(collectionView)
         
-        pageControl = UIPageControl()
-        pageControl.numberOfPages = forecast.count
-        pageControl.currentPage = 0
-        pageControl.tintColor = UIColor.red
-        pageControl.pageIndicatorTintColor = .lightGray
-        pageControl.currentPageIndicatorTintColor = .black
-        pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .valueChanged)
-        view.addSubview(pageControl)
+//        pageControl = UIPageControl()
+//        pageControl.numberOfPages = forecast.count
+//        pageControl.currentPage = 0
+//        pageControl.tintColor = UIColor.red
+//        pageControl.pageIndicatorTintColor = .lightGray
+//        pageControl.currentPageIndicatorTintColor = .black
+//        pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .valueChanged)
+//        view.addSubview(pageControl)
         
-        loaderView = UIActivityIndicatorView(style: .large)
-        loaderView.tintColor = .white
-        loaderView.startAnimating()
         view.addSubview(loaderView)
     }
     
@@ -80,7 +81,7 @@ final class MainViewController: UIViewController {
         let window = UIApplication.shared.connectedScenes.flatMap { ($0 as? UIWindowScene)?.windows ?? [] }.first { $0.isKeyWindow }
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.translatesAutoresizingMaskIntoConstraints = false
+//        pageControl.translatesAutoresizingMaskIntoConstraints = false
         loaderView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -89,8 +90,8 @@ final class MainViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(window?.safeAreaInsets.bottom ?? 0)),
-            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            pageControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(window?.safeAreaInsets.bottom ?? 0)),
+//            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             loaderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             loaderView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
@@ -99,14 +100,15 @@ final class MainViewController: UIViewController {
     
     @objc
     private func searchButtonTapped(_ sender: UIBarButtonItem) {
-        
+        let searchVc = SearchAssembly().make()
+        navigationController?.pushViewController(searchVc, animated: true)
     }
     
-    @objc
-    func pageControlTapped(_ sender: UIPageControl) {
-//        let ofsetX = CGFloat(pageControl.currentPage) * scrollView.frame.size.width
-//        scrollView.setContentOffset(CGPoint(x: ofsetX, y: 0), animated: true)
-    }
+//    @objc
+//    func pageControlTapped(_ sender: UIPageControl) {
+////        let ofsetX = CGFloat(pageControl.currentPage) * scrollView.frame.size.width
+////        scrollView.setContentOffset(CGPoint(x: ofsetX, y: 0), animated: true)
+//    }
     
 }
 
@@ -135,9 +137,9 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         return 0
     }
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
-        pageControl.currentPage = Int(pageNumber)
-    }
+//    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+//        let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
+//        pageControl.currentPage = Int(pageNumber)
+//    }
 }
 
