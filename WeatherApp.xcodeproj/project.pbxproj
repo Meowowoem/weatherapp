@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		202A4FB92A15575A00F78568 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202A4FB82A15575A00F78568 /* LocationManager.swift */; };
+		202A4FB92A15575A00F78568 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202A4FB82A15575A00F78568 /* LocationService.swift */; };
 		208AD8012A141E3A0037D113 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8002A141E3A0037D113 /* DatabaseService.swift */; };
 		208AD8032A14B8D20037D113 /* MainAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8022A14B8D20037D113 /* MainAssembly.swift */; };
 		208AD8072A14BB9E0037D113 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8062A14BB9E0037D113 /* SearchViewController.swift */; };
@@ -26,7 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		202A4FB82A15575A00F78568 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		202A4FB82A15575A00F78568 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		208AD8002A141E3A0037D113 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		208AD8022A14B8D20037D113 /* MainAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAssembly.swift; sourceTree = "<group>"; };
 		208AD8062A14BB9E0037D113 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
@@ -62,7 +62,7 @@
 			children = (
 				208AD8002A141E3A0037D113 /* DatabaseService.swift */,
 				208AD8132A14E9C90037D113 /* NetworkService.swift */,
-				202A4FB82A15575A00F78568 /* LocationManager.swift */,
+				202A4FB82A15575A00F78568 /* LocationService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -256,7 +256,7 @@
 				20C3F0692A13E23A000E3DC2 /* SceneDelegate.swift in Sources */,
 				208AD8142A14E9C90037D113 /* NetworkService.swift in Sources */,
 				20C3F0A02A1414D5000E3DC2 /* MainModel.swift in Sources */,
-				202A4FB92A15575A00F78568 /* LocationManager.swift in Sources */,
+				202A4FB92A15575A00F78568 /* LocationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,9 +400,12 @@
 				DEVELOPMENT_TEAM = 9UNZFKWJF8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Разрешите геолокацию, чтобы мы смогли показать вам прогноз в этой точке";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Разрешите геолокацию, чтобы мы смогли показать вам прогноз в этой точке";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -414,7 +417,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -428,9 +431,12 @@
 				DEVELOPMENT_TEAM = 9UNZFKWJF8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Разрешите геолокацию, чтобы мы смогли показать вам прогноз в этой точке";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Разрешите геолокацию, чтобы мы смогли показать вам прогноз в этой точке";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -442,7 +448,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

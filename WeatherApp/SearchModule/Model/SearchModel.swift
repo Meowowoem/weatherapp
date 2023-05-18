@@ -13,11 +13,19 @@ struct City: Decodable {
     let country: String
     let lat: Double
     let lon: Double
+    let localtimeEpoch: Double?
 }
 
 struct ForecastJson: Decodable {
     let location: City
+    let current: Current
     let forecast: ForecastRaw
+}
+
+struct Current: Decodable {
+    let tempC: Double
+    let humidity: Int
+    let condition: Condition
 }
 
 struct ForecastRaw: Decodable {
@@ -48,7 +56,7 @@ final class SearchModel {
     }
     
     public func fetchCities(query: String,
-                            completion: @escaping (Result<[City], Error>) -> (Void)) {
+                            completion: @escaping (Result<[City], FetchError>) -> (Void)) {
         networkService.fetchCities(query: query,
                                     completion: { result in
             completion(result)
@@ -56,7 +64,7 @@ final class SearchModel {
     }
     
     public func loadForecast(for city: City,
-                             completion: @escaping (Result<ForecastJson, Error>) -> (Void)) {
+                             completion: @escaping (Result<ForecastJson, FetchError>) -> (Void)) {
         networkService.fetchForecast(lat: city.lat,
                                       lon: city.lon,
                                       completion: { result in

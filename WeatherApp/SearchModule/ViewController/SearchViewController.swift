@@ -112,7 +112,11 @@ extension SearchViewController: UISearchBarDelegate {
     
     @objc func reload(_ searchBar: UISearchBar) {
         guard let query = searchBar.text, query.trimmingCharacters(in: .whitespaces) != "" else {
-            print("nothing to search")
+            return
+        }
+        
+        if query.count < 3 {
+            self.showAlert(message: "Поиск от 3 смиволов")
             return
         }
         
@@ -121,11 +125,27 @@ extension SearchViewController: UISearchBarDelegate {
             switch result {
                 
             case .success(let cities):
+                if cities.isEmpty {
+                    self.cities.removeAll()
+                    self.tableView.reloadData()
+                    self.showAlert(message: "Ничего не найдено")
+                    break
+                }
                 self.cities = cities
                 self.tableView.reloadData()
             case .failure(let error):
-                break
+                self.cities.removeAll()
+                self.tableView.reloadData()
+                self.showAlert(message: error.description)
             }
         })
+    }
+    
+    private func showAlert(message: String) {
+        let alertController = UIAlertController (title: message, message: "", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+            alertController.addAction(cancelAction)
+
+        self.present(alertController, animated: true, completion: nil)
     }
 }

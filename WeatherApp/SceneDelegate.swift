@@ -14,7 +14,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         let networkService = AlamofireService()
-        let mainVc = MainAssembly.make(networkService: networkService)
+        let locationService = LocationService()
+        let mainVc = MainAssembly.make(networkService: networkService, locationService: locationService)
         let navigationVc = UINavigationController(rootViewController: mainVc)
         let window = UIWindow(windowScene: scene)
         window.rootViewController = navigationVc

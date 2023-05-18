@@ -44,15 +44,37 @@ final class MainViewController: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        model.requestForAuthorization { status in
+            switch status {
+            case .autorized:
+                getForecastForCurrentLocation()
+            case .denied:
+                showDeniedLocationAlert()
+                getForecastForCurrentLocation()
+            }
+        }
+        
+        setupNavigationBar()
+        setupViews()
+        setupConstraints()
+    }
+    
+    private func getForecastForCurrentLocation() {
         model.getForecastForCurrentLocation { [weak self] result in
             guard let self = self else { return }
             switch result {
                 
             case .success(let forecast):
                 self.forecasts.append(Forecast(from: forecast))
+                print(forecast)
                 self.loaderView.stopAnimating()
                 self.collectionView.isHidden = false
                 self.collectionView.reloadData()
@@ -61,10 +83,29 @@ final class MainViewController: UIViewController,
             }
 
         }
+    }
+    
+    private func showDeniedLocationAlert() {
+        let alertController = UIAlertController (title: "Разрешите геолокацию в настройках приложения", message: "", preferredStyle: .alert)
+
+            let settingsAction = UIAlertAction(title: "Настройки", style: .default) { (_) -> Void in
+
+                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                    return
+                }
+
+                if UIApplication.shared.canOpenURL(settingsUrl) {
+                    UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                        print("Settings opened: \(success)") // Prints true
+                    })
+                }
+            }
+            alertController.addAction(settingsAction)
+            let cancelAction = UIAlertAction(title: "Отмена", style: .default, handler: nil)
+            alertController.addAction(cancelAction)
+
+            present(alertController, animated: true, completion: nil)
         
-        setupNavigationBar()
-        setupViews()
-        setupConstraints()
     }
 
     private func setupNavigationBar() {

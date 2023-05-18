@@ -9,9 +9,9 @@ import UIKit
 import CoreLocation
 
 enum MainAssembly {
-    static func make(networkService: Network) -> MainViewController {
+    static func make(networkService: Network, locationService: LocationService) -> MainViewController {
         let model = MainModel(networkService: networkService,
-                              locationManager: LocationManager())
+                              locationService: locationService)
         let vc = MainViewController(model: model, searchVC: {
             SearchAssembly.make(networkService: networkService)
         })

@@ -10,15 +10,17 @@ import CoreLocation
 
 struct Forecast {
     let cityName: String
+    let time: Double
     let temperature: Int
     let condition: WeatherCondition
     let humidity: Int
     
     init(from jsonModel: ForecastJson) {
         self.cityName = jsonModel.location.name
-        self.temperature = Int(jsonModel.forecast.forecastday[0].hour[0].tempC)
-        self.condition = Self.conditionByCode(jsonModel.forecast.forecastday[0].hour[0].condition.code)
-        self.humidity = jsonModel.forecast.forecastday[0].hour[0].humidity
+        self.time = jsonModel.location.localtimeEpoch ?? Date().timeIntervalSince1970
+        self.temperature = Int(jsonModel.current.tempC)
+        self.condition = Self.conditionByCode(jsonModel.current.condition.code)
+        self.humidity = jsonModel.current.humidity
     }
     
     private static func conditionByCode(_ code: Int) -> WeatherCondition {
@@ -48,22 +50,43 @@ enum WeatherCondition {
     case undefined
 }
 
-final class MainModel: NSObject,
-                       CLLocationManagerDelegate {
+enum LocationStatus {
+    case autorized, denied
+}
+
+final class MainModel: NSObject {
     private var networkService: Network
-    private var locationManager: LocationManager
+    private var locationService: LocationService
     
     init(networkService: Network,
-         locationManager: LocationManager) {
+         locationService: LocationService) {
         self.networkService = networkService
-        self.locationManager = locationManager
+        self.locationService = locationService
     }
     
-    func getForecastForCurrentLocation(completion: @escaping (Result<ForecastJson, Error>) -> (Void)) {
-        guard let location = locationManager.location else { return }
+    func getForecastForCurrentLocation(completion: @escaping (Result<ForecastJson, FetchError>) -> (Void)) {
+        locationService.handlerLocation = { location in
+            self.networkService.fetchForecast(lat: location.coordinate.latitude, lon: location.coordinate.longitude) { result in
+                completion(result)
+            }
+        }
         
-        networkService.fetchForecast(lat: location.coordinate.latitude, lon: location.coordinate.longitude) { result in
-            completion(result)
+    }
+    
+    public func requestForAuthorization(completion: (LocationStatus) -> (Void)) {
+        let status = locationService.locationManager.authorizationStatus
+
+        switch status {
+        case .notDetermined:
+            locationService.requestForAutorization()
+            completion(.autorized)
+        case .restricted, .denied:
+            completion(.denied)
+        case .authorizedWhenInUse, .authorizedAlways:
+            completion(.autorized)
+        @unknown default:
+            completion(.denied)
         }
     }
+    
 }
