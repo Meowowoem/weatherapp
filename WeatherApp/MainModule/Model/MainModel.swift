@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreLocation
+import RealmSwift
 
 struct Forecast {
     let cityName: String
@@ -17,10 +18,22 @@ struct Forecast {
     
     init(from jsonModel: ForecastJson) {
         self.cityName = jsonModel.location.name
-        self.time = jsonModel.location.localtimeEpoch ?? Date().timeIntervalSince1970
+        self.time = jsonModel.location.localtimeEpoch ?? Double(Date().timeIntervalSince1970)
         self.temperature = Int(jsonModel.current.tempC)
         self.condition = Self.conditionByCode(jsonModel.current.condition.code)
         self.humidity = jsonModel.current.humidity
+    }
+    
+    init(from forecastEntity: ForecastEntity) {
+        self.cityName = forecastEntity.cityName
+        let index = forecastEntity.unixDates.firstIndex {
+            $0 >= Double(Date().timeIntervalSince1970)
+        }
+        self.time = forecastEntity.unixDates[index ?? 0]
+        self.temperature = Int(forecastEntity.temps[index ?? 0])
+        self.condition = Self.conditionByCode(forecastEntity.conditionCodes[index ?? 0])
+        self.humidity = forecastEntity.humiditys[index ?? 0]
+        
     }
     
     private static func conditionByCode(_ code: Int) -> WeatherCondition {
@@ -57,20 +70,34 @@ enum LocationStatus {
 final class MainModel: NSObject {
     private var networkService: Network
     private var locationService: LocationService
+    private var storageService: Storage
     
     init(networkService: Network,
-         locationService: LocationService) {
+         locationService: LocationService,
+         storageService: Storage) {
         self.networkService = networkService
         self.locationService = locationService
+        self.storageService = storageService
     }
     
-    func getForecastForCurrentLocation(completion: @escaping (Result<ForecastJson, FetchError>) -> (Void)) {
+    public func getForecastForCurrentLocation(completion: @escaping (Result<ForecastJson, FetchError>) -> (Void)) {
         locationService.handlerLocation = { location in
-            self.networkService.fetchForecast(lat: location.coordinate.latitude, lon: location.coordinate.longitude) { result in
+            self.networkService.fetchForecast(lat: location.coordinate.latitude,
+                                              lon: location.coordinate.longitude) { result in
                 completion(result)
             }
         }
         
+    }
+    
+    public func getForecastFromCache(completion: @escaping (Results<ForecastEntity>) -> (Void)) {
+        storageService.fetch { forecast in
+            completion(forecast)
+        }
+    }
+    
+    public func saveToCache(forecastJson: ForecastJson) {
+        storageService.add(forecastJson: forecastJson)
     }
     
     public func requestForAuthorization(completion: (LocationStatus) -> (Void)) {

@@ -23,6 +23,8 @@
 		20C3F0732A13E23B000E3DC2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20C3F0712A13E23B000E3DC2 /* LaunchScreen.storyboard */; };
 		20C3F09E2A140634000E3DC2 /* ForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F09D2A140634000E3DC2 /* ForecastCell.swift */; };
 		20C3F0A02A1414D5000E3DC2 /* MainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F09F2A1414D5000E3DC2 /* MainModel.swift */; };
+		20E87A912A16233300038B9C /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 20E87A902A16233300038B9C /* Realm */; };
+		20E87A932A16233300038B9C /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 20E87A922A16233300038B9C /* RealmSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +52,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20E87A932A16233300038B9C /* RealmSwift in Frameworks */,
+				20E87A912A16233300038B9C /* Realm in Frameworks */,
 				208AD80D2A14BE8E0037D113 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -186,6 +190,8 @@
 			name = WeatherApp;
 			packageProductDependencies = (
 				208AD80C2A14BE8E0037D113 /* Alamofire */,
+				20E87A902A16233300038B9C /* Realm */,
+				20E87A922A16233300038B9C /* RealmSwift */,
 			);
 			productName = WeatherApp;
 			productReference = 20C3F0632A13E23A000E3DC2 /* WeatherApp.app */;
@@ -217,6 +223,7 @@
 			mainGroup = 20C3F05A2A13E23A000E3DC2;
 			packageReferences = (
 				208AD80B2A14BE8E0037D113 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				20E87A8F2A16233300038B9C /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = 20C3F0642A13E23A000E3DC2 /* Products */;
 			projectDirPath = "";
@@ -484,6 +491,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		20E87A8F2A16233300038B9C /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.39.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -491,6 +506,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 208AD80B2A14BE8E0037D113 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		20E87A902A16233300038B9C /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20E87A8F2A16233300038B9C /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		20E87A922A16233300038B9C /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20E87A8F2A16233300038B9C /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -110,7 +110,7 @@ private extension AlamofireService {
         components.queryItems = [
             URLQueryItem(name: "key", value: key),
             URLQueryItem(name: "q", value: coordString),
-            URLQueryItem(name: "days", value: "10")
+            URLQueryItem(name: "days", value: "1")
         ]
         
         return components.url?.absoluteString ?? ""

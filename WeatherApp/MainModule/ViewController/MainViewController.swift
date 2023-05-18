@@ -73,13 +73,18 @@ final class MainViewController: UIViewController,
             switch result {
                 
             case .success(let forecast):
+                self.model.saveToCache(forecastJson: forecast)
                 self.forecasts.append(Forecast(from: forecast))
-                print(forecast)
                 self.loaderView.stopAnimating()
                 self.collectionView.isHidden = false
                 self.collectionView.reloadData()
             case .failure(let error):
-                break
+                self.model.getForecastFromCache {
+                    self.forecasts = $0.map(Forecast.init)
+                    self.loaderView.stopAnimating()
+                    self.collectionView.isHidden = false
+                    self.collectionView.reloadData()
+                }
             }
 
         }
@@ -141,6 +146,7 @@ final class MainViewController: UIViewController,
     }
     
     func addForecast(_ sender: SearchViewController, forecast: ForecastJson) {
+        self.model.saveToCache(forecastJson: forecast)
         self.forecasts.append(Forecast(from: forecast))
         collectionView.reloadData()
         let indexPath = IndexPath(item: self.forecasts.count - 1, section: 0)
