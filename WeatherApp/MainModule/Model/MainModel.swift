@@ -28,10 +28,16 @@ final class MainModel {
     }
     
     func getForecastForCurrentLocation(completion: @escaping (Result<GeneralForecast, FetchError>) -> Void) {
-        locationService.handlerLocation = { [unowned self] location in
+        locationService.handlerLocation = { [weak self] location in
             let lat = location.coordinate.latitude
             let lon = location.coordinate.longitude
-            networkService.fetchForecast(lat: lat, lon: lon, completion: completion)
+            self?.networkService.fetchForecast(lat: lat, lon: lon, completion: completion)
+        }
+    }
+    
+    func getForecastForCachedLocation(_ cachedForecasts: [Forecast], completion: @escaping (Result<GeneralForecast, FetchError>) -> Void) {
+        for forecast in cachedForecasts {
+            networkService.fetchForecast(lat: forecast.lat, lon: forecast.lon, completion: completion)
         }
     }
     

@@ -57,10 +57,13 @@ final class ForecastEntity: Object {
 extension Forecast {
     init(from forecastEntity: ForecastEntity) {
         cityName = forecastEntity.cityName
+        lat = forecastEntity.lat
+        lon = forecastEntity.lon
         time = forecastEntity.unixDates[Self.calculateIndexFrom(forecastEntity)]
         temperature = Int(forecastEntity.temps[Self.calculateIndexFrom(forecastEntity)])
         condition = Self.conditionByCode(forecastEntity.conditionCodes[Self.calculateIndexFrom(forecastEntity)])
         humidity = forecastEntity.humiditys[Self.calculateIndexFrom(forecastEntity)]
+        currentLocation = false
     }
     
     static func calculateIndexFrom(_ forecastEntity: ForecastEntity) -> Int {

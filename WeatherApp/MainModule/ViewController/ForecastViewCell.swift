@@ -53,6 +53,14 @@ final class ForecastViewCell: UICollectionViewCell {
         return label
     }()
     
+    private let currentLocationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Your geoposition"
+        label.font = .systemFont(ofSize: 20, weight: .medium)
+        label.textColor = .systemGreen
+        return label
+    }()
+    
     static var id: String {
         String(describing: self)
     }
@@ -75,6 +83,7 @@ final class ForecastViewCell: UICollectionViewCell {
         temperatureLabel.text = "\(forecast.temperature)℃"
         conditionLabel.text = forecast.condition.rawValue.capitalized
         humidityLabel.text = "Humidity: \(forecast.humidity) %"
+        currentLocationLabel.isHidden = !forecast.currentLocation
     }
     
     //MARK: - Private methods
@@ -85,6 +94,7 @@ final class ForecastViewCell: UICollectionViewCell {
         mainStackView.addArrangedSubview(temperatureLabel)
         mainStackView.addArrangedSubview(conditionLabel)
         mainStackView.addArrangedSubview(humidityLabel)
+        mainStackView.addArrangedSubview(currentLocationLabel)
     }
     
     private func setupConstraints() {

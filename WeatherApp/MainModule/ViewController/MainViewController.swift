@@ -25,8 +25,7 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
     }()
     
     private let loaderView: UIActivityIndicatorView = {
-        let loader = UIActivityIndicatorView(style: .large)
-        loader.tintColor = .systemGray
+        let loader = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
         loader.startAnimating()
         loader.translatesAutoresizingMaskIntoConstraints = false
         return loader
@@ -35,6 +34,7 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
     private let model: MainModel
     private let searchVC: () -> SearchViewController
     private var forecasts: [Forecast] = []
+    private var cachedForecasts: [Forecast] = []
     
     //MARK: - Init
     init(model: MainModel, searchVC: @escaping () -> SearchViewController) {
@@ -54,40 +54,77 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
         setupNavigationBar()
         setupViews()
         setupConstraints()
-        
-        model.requestForAuthorization { status in
-            if case .denied = status {
-                showDeniedLocationAlert()
-            }
-            getForecastForCurrentLocation()
-        }
+        showForecast()
     }
     
     //MARK: - Private methods
-    private func getForecastForCurrentLocation() {
-        model.getForecastForCurrentLocation { [weak self] result in
-            switch result {
-            case let .success(forecast):
-                self?.handleForecast(forecast)
-            case let .failure(error):
-                self?.showAlert(message: error.description) { _ in
-                    self?.getForecastFromCache()
+    private func showForecast() {
+        getForecastFromCache { [weak self] in
+            self?.model.requestForAuthorization { status in
+                if case .denied = status {
+                    self?.showDeniedLocationAlert()
+                }
+                self?.getForecastForCurrentLocation {
+                    self?.getForecastForCachedLocation()
                 }
             }
         }
     }
     
-    private func getForecastFromCache() {
-        model.getForecastFromCache { [weak self] in
-            self?.showAlert(message: "Forecast loaded from cache")
-            self?.forecasts = $0.map(Forecast.init)
-            self?.reloadUI()
+    private func getForecastForCurrentLocation(completion: @escaping () -> Void) {
+        model.getForecastForCurrentLocation { [weak self] result in
+            switch result {
+            case let .success(forecast):
+                self?.handleForecast(forecast, currenLocation: true)
+                completion()
+            case let .failure(error):
+                self?.showAlert(message: error.description) { _ in
+                    self?.showCachedForecast()
+                }
+            }
         }
     }
     
-    private func handleForecast(_ forecast: GeneralForecast) {
+    private func getForecastForCachedLocation() {
+        model.getForecastForCachedLocation(cachedForecasts) { [weak self] result in
+            switch result {
+            case let .success(forecast):
+                self?.handleForecast(forecast, currenLocation: false)
+            case let .failure(error):
+                self?.showAlert(message: error.description) { _ in
+                    self?.showCachedForecast()
+                }
+            }
+        }
+    }
+    
+    private func getForecastFromCache(completion: @escaping () -> (Void)) {
+        model.getForecastFromCache { [weak self] in
+            self?.cachedForecasts = $0.map(Forecast.init)
+            completion()
+        }
+    }
+    
+    private func showCachedForecast() {
+        if cachedForecasts.isEmpty {
+            showAlert(message: "There is no forecast in the cache. \nTry load forecast from network.") { [weak self] _ in
+                self?.getForecastForCurrentLocation {}
+            }
+            return
+        }
+        showAlert(message: "Forecast loaded from cache")
+        forecasts = cachedForecasts
+        reloadUI()
+    }
+    
+    private func handleForecast(_ forecast: GeneralForecast, currenLocation: Bool) {
         model.saveToCache(forecastJson: forecast)
-        forecasts.append(Forecast(from: forecast))
+        let forecast = Forecast(from: forecast, currentLocation: currenLocation)
+        if !forecasts.contains(where: {
+            $0.lat == forecast.lat && $0.lon == forecast.lon
+        }) {
+            forecasts.append(forecast)
+        }
         reloadUI()
     }
     
@@ -133,7 +170,7 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
     //MARK: - SearchViewControllerDelegate
     func addForecast(_ sender: SearchViewController, forecast: GeneralForecast) {
         model.saveToCache(forecastJson: forecast)
-        forecasts.append(Forecast(from: forecast))
+        forecasts.append(Forecast(from: forecast, currentLocation: false))
         collectionView.reloadData()
         let indexPath = IndexPath(item: forecasts.count - 1, section: .zero)
         collectionView.isPagingEnabled = false
@@ -194,11 +231,9 @@ private extension MainViewController {
         
         let settingsAction = UIAlertAction(title: "Settings",
                                            style: .default) { _ in
-            
             guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
                 return
             }
-            
             if UIApplication.shared.canOpenURL(settingsUrl) {
                 UIApplication.shared.open(settingsUrl)
             }
@@ -206,6 +241,7 @@ private extension MainViewController {
         alertController.addAction(settingsAction)
         let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
         alertController.addAction(cancelAction)
-        showDetailViewController(alertController, sender: self)
+        present(alertController, animated: true, completion: nil)
+
     }
 }
