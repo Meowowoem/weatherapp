@@ -88,7 +88,7 @@ extension SearchViewController: UISearchBarDelegate {
         let task = DispatchWorkItem { [weak self] in
             self?.reload(searchBar)
         }
-        self.searchTask = task
+        searchTask = task
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.75, execute: task)
     }
     
