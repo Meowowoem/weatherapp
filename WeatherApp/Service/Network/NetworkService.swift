@@ -9,8 +9,6 @@ import Foundation
 import Alamofire
 
 final class AlamofireService: Network {
-    private let key = "42d074f43e4d4b4485793642231705"
-    
     func fetchCities(query: String, completion: @escaping (Result<[City], FetchError>) -> Void) {
         guard let urlString = createURLStringForSearch(query) else { return completion(.failure(.badResponce)) }
         AF.request(urlString)
@@ -38,7 +36,7 @@ private extension AlamofireService {
         components.path = "/v1/search.json"
         
         components.queryItems = [
-            URLQueryItem(name: "key", value: key),
+            URLQueryItem(name: "key", value: APIKey.key),
             URLQueryItem(name: "q", value: query)
         ]
         
@@ -53,7 +51,7 @@ private extension AlamofireService {
         components.path = "/v1/forecast.json"
         
         components.queryItems = [
-            URLQueryItem(name: "key", value: key),
+            URLQueryItem(name: "key", value: APIKey.key),
             URLQueryItem(name: "q", value: coordString),
             URLQueryItem(name: "days", value: "1")
         ]

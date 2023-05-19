@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2025957E2A1769B80037F030 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2025957D2A1769B80037F030 /* APIKey.swift */; };
 		202A4FB92A15575A00F78568 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202A4FB82A15575A00F78568 /* LocationService.swift */; };
 		208AD8012A141E3A0037D113 /* RealmStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8002A141E3A0037D113 /* RealmStorage.swift */; };
 		208AD8032A14B8D20037D113 /* MainAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8022A14B8D20037D113 /* MainAssembly.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2025957D2A1769B80037F030 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		202A4FB82A15575A00F78568 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		208AD8002A141E3A0037D113 /* RealmStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmStorage.swift; sourceTree = "<group>"; };
 		208AD8022A14B8D20037D113 /* MainAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAssembly.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				20E87A9A2A173C3D00038B9C /* NetworkError.swift */,
 				20E87A9C2A173C5800038B9C /* Network.swift */,
 				20E87AA32A174DCC00038B9C /* GeneralForecast.swift */,
+				2025957D2A1769B80037F030 /* APIKey.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -304,6 +307,7 @@
 			files = (
 				20C3F09E2A140634000E3DC2 /* ForecastViewCell.swift in Sources */,
 				20E87A9B2A173C3D00038B9C /* NetworkError.swift in Sources */,
+				2025957E2A1769B80037F030 /* APIKey.swift in Sources */,
 				20E87A962A173B2200038B9C /* ForecastEntity.swift in Sources */,
 				20C3F06B2A13E23A000E3DC2 /* MainViewController.swift in Sources */,
 				20E87AA02A17406800038B9C /* Location.swift in Sources */,
