@@ -8,6 +8,7 @@
 import UIKit
 
 final class SearchResultCell: UITableViewCell {
+    //MARK: - Private properties
     private let stackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -28,14 +29,31 @@ final class SearchResultCell: UITableViewCell {
         return button
     }()
     
+    static var id: String {
+        String(describing: self)
+    }
+    
+    //MARK: - Init
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super .init(style: style, reuseIdentifier: reuseIdentifier)
+        setupViews()
+        setupConstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: - Public methods
     func setupCell(name: String, country: String) {
-        addSubview(stackView)
-        
         nameLabel.text = "\(name), \(country)"
+    }
+    
+    //MARK: - Private methods
+    private func setupViews() {
+        contentView.addSubview(stackView)
         stackView.addArrangedSubview(nameLabel)
         stackView.addArrangedSubview(addButton)
-        
-        setupConstraints()
     }
     
     private func setupConstraints() {

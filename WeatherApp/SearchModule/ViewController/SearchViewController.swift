@@ -7,23 +7,17 @@
 
 import UIKit
 
-final class SearchViewController: UIViewController {
+final class SearchViewController: UITableViewController {
     //MARK: - Private properties
-    private let tableView: UITableView = {
-        let table = UITableView()
-        table.translatesAutoresizingMaskIntoConstraints = false
-        return table
-    }()
-    
     private let searchBar: UISearchBar = {
         let bar = UISearchBar()
-        bar.searchBarStyle = UISearchBar.Style.default
+        bar.searchBarStyle = .default
         bar.placeholder = "Search..."
-        bar.isTranslucent = false
         bar.backgroundImage = UIImage()
         return bar
     }()
     
+    private var searchTask: DispatchWorkItem?
     private var cities: [City] = []
     private let model: SearchModel
     weak var delegate: SearchViewControllerDelegate?
@@ -43,7 +37,6 @@ final class SearchViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupTableView()
-        setupConstraints()
     }
     
     //MARK: - Private methods
@@ -53,27 +46,15 @@ final class SearchViewController: UIViewController {
     }
     
     private func setupTableView() {
-        tableView.register(SearchResultCell.self, forCellReuseIdentifier: "SearchResultCell")
-        tableView.delegate = self
-        tableView.dataSource = self
-        view.addSubview(tableView)
-    }
-    
-    private func setupConstraints() {
-        NSLayoutConstraint.activate([
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        tableView.register(SearchResultCell.self, forCellReuseIdentifier: SearchResultCell.id)
     }
 }
 
 //MARK: - UITableViewDelegate, UITableViewDataSource
-extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+extension SearchViewController {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: "SearchResultCell",
+            withIdentifier: SearchResultCell.id,
             for: indexPath
         ) as? SearchResultCell else { return UITableViewCell() }
         let city = cities[indexPath.row]
@@ -81,11 +62,11 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         cities.count
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let city = cities[indexPath.row]
         model.loadForecast(for: city) { [weak self] result in
             guard let self = self else { return }
@@ -103,10 +84,12 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
 //MARK: - UISearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        NSObject.cancelPreviousPerformRequests(withTarget: self,
-                                               selector: #selector(reload),
-                                               object: searchBar)
-        perform(#selector(reload), with: searchBar, afterDelay: 0.75)
+        searchTask?.cancel()
+        let task = DispatchWorkItem { [weak self] in
+            self?.reload(searchBar)
+        }
+        self.searchTask = task
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.75, execute: task)
     }
     
     @objc func reload(_ searchBar: UISearchBar) {
@@ -115,7 +98,7 @@ extension SearchViewController: UISearchBarDelegate {
             return
         }
         
-        guard query.count > 3 else { return showAlert(message: "Type from 3 symbols") }
+        guard query.count > 2 else { return showAlert(message: "Type from 3 symbols") }
         
         model.fetchCities(query: query) { [weak self] result in
             switch result {
