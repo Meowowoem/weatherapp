@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		202A4FB92A15575A00F78568 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202A4FB82A15575A00F78568 /* LocationService.swift */; };
-		208AD8012A141E3A0037D113 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8002A141E3A0037D113 /* DatabaseService.swift */; };
+		208AD8012A141E3A0037D113 /* RealmStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8002A141E3A0037D113 /* RealmStorage.swift */; };
 		208AD8032A14B8D20037D113 /* MainAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8022A14B8D20037D113 /* MainAssembly.swift */; };
 		208AD8072A14BB9E0037D113 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8062A14BB9E0037D113 /* SearchViewController.swift */; };
 		208AD80A2A14BBBE0037D113 /* SearchAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208AD8092A14BBBE0037D113 /* SearchAssembly.swift */; };
@@ -21,15 +21,24 @@
 		20C3F06B2A13E23A000E3DC2 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F06A2A13E23A000E3DC2 /* MainViewController.swift */; };
 		20C3F0702A13E23B000E3DC2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20C3F06F2A13E23B000E3DC2 /* Assets.xcassets */; };
 		20C3F0732A13E23B000E3DC2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20C3F0712A13E23B000E3DC2 /* LaunchScreen.storyboard */; };
-		20C3F09E2A140634000E3DC2 /* ForecastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F09D2A140634000E3DC2 /* ForecastCell.swift */; };
+		20C3F09E2A140634000E3DC2 /* ForecastViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F09D2A140634000E3DC2 /* ForecastViewCell.swift */; };
 		20C3F0A02A1414D5000E3DC2 /* MainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C3F09F2A1414D5000E3DC2 /* MainModel.swift */; };
 		20E87A912A16233300038B9C /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 20E87A902A16233300038B9C /* Realm */; };
 		20E87A932A16233300038B9C /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 20E87A922A16233300038B9C /* RealmSwift */; };
+		20E87A962A173B2200038B9C /* ForecastEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E87A952A173B2200038B9C /* ForecastEntity.swift */; };
+		20E87A982A173B3E00038B9C /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E87A972A173B3E00038B9C /* Storage.swift */; };
+		20E87A9B2A173C3D00038B9C /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E87A9A2A173C3D00038B9C /* NetworkError.swift */; };
+		20E87A9D2A173C5800038B9C /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E87A9C2A173C5800038B9C /* Network.swift */; };
+		20E87AA02A17406800038B9C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E87A9F2A17406800038B9C /* Location.swift */; };
+		20E87AA22A1740B400038B9C /* Forecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E87AA12A1740B400038B9C /* Forecast.swift */; };
+		20E87AA42A174DCC00038B9C /* GeneralForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E87AA32A174DCC00038B9C /* GeneralForecast.swift */; };
+		20E87AA62A174E0C00038B9C /* SearchViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E87AA52A174E0C00038B9C /* SearchViewControllerDelegate.swift */; };
+		20E87AA82A174E6200038B9C /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E87AA72A174E6200038B9C /* UIViewController+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		202A4FB82A15575A00F78568 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
-		208AD8002A141E3A0037D113 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
+		208AD8002A141E3A0037D113 /* RealmStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmStorage.swift; sourceTree = "<group>"; };
 		208AD8022A14B8D20037D113 /* MainAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAssembly.swift; sourceTree = "<group>"; };
 		208AD8062A14BB9E0037D113 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		208AD8092A14BBBE0037D113 /* SearchAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAssembly.swift; sourceTree = "<group>"; };
@@ -43,8 +52,17 @@
 		20C3F06F2A13E23B000E3DC2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		20C3F0722A13E23B000E3DC2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		20C3F0742A13E23B000E3DC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		20C3F09D2A140634000E3DC2 /* ForecastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastCell.swift; sourceTree = "<group>"; };
+		20C3F09D2A140634000E3DC2 /* ForecastViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastViewCell.swift; sourceTree = "<group>"; };
 		20C3F09F2A1414D5000E3DC2 /* MainModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainModel.swift; sourceTree = "<group>"; };
+		20E87A952A173B2200038B9C /* ForecastEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastEntity.swift; sourceTree = "<group>"; };
+		20E87A972A173B3E00038B9C /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		20E87A9A2A173C3D00038B9C /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
+		20E87A9C2A173C5800038B9C /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		20E87A9F2A17406800038B9C /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		20E87AA12A1740B400038B9C /* Forecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Forecast.swift; sourceTree = "<group>"; };
+		20E87AA32A174DCC00038B9C /* GeneralForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralForecast.swift; sourceTree = "<group>"; };
+		20E87AA52A174E0C00038B9C /* SearchViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewControllerDelegate.swift; sourceTree = "<group>"; };
+		20E87AA72A174E6200038B9C /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,9 +82,9 @@
 		208AD7FD2A141DD60037D113 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				208AD8002A141E3A0037D113 /* DatabaseService.swift */,
-				208AD8132A14E9C90037D113 /* NetworkService.swift */,
-				202A4FB82A15575A00F78568 /* LocationService.swift */,
+				20E87A942A16653F00038B9C /* Storage */,
+				20E87A992A173C3000038B9C /* Network */,
+				20E87A9E2A17406100038B9C /* Location */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -76,6 +94,8 @@
 			children = (
 				208AD8062A14BB9E0037D113 /* SearchViewController.swift */,
 				208AD80E2A14C0BE0037D113 /* SearchResultCell.swift */,
+				20E87AA52A174E0C00038B9C /* SearchViewControllerDelegate.swift */,
+				20E87AA72A174E6200038B9C /* UIViewController+Extension.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -159,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				20C3F09F2A1414D5000E3DC2 /* MainModel.swift */,
+				20E87AA12A1740B400038B9C /* Forecast.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -167,9 +188,39 @@
 			isa = PBXGroup;
 			children = (
 				20C3F06A2A13E23A000E3DC2 /* MainViewController.swift */,
-				20C3F09D2A140634000E3DC2 /* ForecastCell.swift */,
+				20C3F09D2A140634000E3DC2 /* ForecastViewCell.swift */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		20E87A942A16653F00038B9C /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				20E87A972A173B3E00038B9C /* Storage.swift */,
+				208AD8002A141E3A0037D113 /* RealmStorage.swift */,
+				20E87A952A173B2200038B9C /* ForecastEntity.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		20E87A992A173C3000038B9C /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				208AD8132A14E9C90037D113 /* NetworkService.swift */,
+				20E87A9A2A173C3D00038B9C /* NetworkError.swift */,
+				20E87A9C2A173C5800038B9C /* Network.swift */,
+				20E87AA32A174DCC00038B9C /* GeneralForecast.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		20E87A9E2A17406100038B9C /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				202A4FB82A15575A00F78568 /* LocationService.swift */,
+				20E87A9F2A17406800038B9C /* Location.swift */,
+			);
+			path = Location;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -251,19 +302,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20C3F09E2A140634000E3DC2 /* ForecastCell.swift in Sources */,
+				20C3F09E2A140634000E3DC2 /* ForecastViewCell.swift in Sources */,
+				20E87A9B2A173C3D00038B9C /* NetworkError.swift in Sources */,
+				20E87A962A173B2200038B9C /* ForecastEntity.swift in Sources */,
 				20C3F06B2A13E23A000E3DC2 /* MainViewController.swift in Sources */,
+				20E87AA02A17406800038B9C /* Location.swift in Sources */,
 				208AD8072A14BB9E0037D113 /* SearchViewController.swift in Sources */,
 				208AD8032A14B8D20037D113 /* MainAssembly.swift in Sources */,
 				208AD80F2A14C0BE0037D113 /* SearchResultCell.swift in Sources */,
 				208AD80A2A14BBBE0037D113 /* SearchAssembly.swift in Sources */,
+				20E87AA42A174DCC00038B9C /* GeneralForecast.swift in Sources */,
 				208AD8122A14D32F0037D113 /* SearchModel.swift in Sources */,
-				208AD8012A141E3A0037D113 /* DatabaseService.swift in Sources */,
+				208AD8012A141E3A0037D113 /* RealmStorage.swift in Sources */,
+				20E87AA82A174E6200038B9C /* UIViewController+Extension.swift in Sources */,
+				20E87A9D2A173C5800038B9C /* Network.swift in Sources */,
 				20C3F0672A13E23A000E3DC2 /* AppDelegate.swift in Sources */,
+				20E87AA62A174E0C00038B9C /* SearchViewControllerDelegate.swift in Sources */,
 				20C3F0692A13E23A000E3DC2 /* SceneDelegate.swift in Sources */,
 				208AD8142A14E9C90037D113 /* NetworkService.swift in Sources */,
 				20C3F0A02A1414D5000E3DC2 /* MainModel.swift in Sources */,
 				202A4FB92A15575A00F78568 /* LocationService.swift in Sources */,
+				20E87AA22A1740B400038B9C /* Forecast.swift in Sources */,
+				20E87A982A173B3E00038B9C /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

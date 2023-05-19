@@ -7,10 +7,9 @@
 
 import UIKit
 
-final class MainViewController: UIViewController,
-                                SearchViewControllerDelegate {
-    
-    private let collectionView: UICollectionView = {
+final class MainViewController: UIViewController, SearchViewControllerDelegate {
+    //MARK: - Private properties
+    private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -18,23 +17,27 @@ final class MainViewController: UIViewController,
         collection.backgroundColor = .white
         collection.isHidden = true
         collection.showsHorizontalScrollIndicator = false
-        
+        collection.delegate = self
+        collection.dataSource = self
+        collection.register(ForecastViewCell.self, forCellWithReuseIdentifier: ForecastViewCell.id)
+        collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
     }()
     
-    private var loaderView: UIActivityIndicatorView = {
+    private let loaderView: UIActivityIndicatorView = {
         let loader = UIActivityIndicatorView(style: .large)
         loader.tintColor = .systemGray
         loader.startAnimating()
+        loader.translatesAutoresizingMaskIntoConstraints = false
         return loader
     }()
     
-    private var model: MainModel
+    private let model: MainModel
     private let searchVC: () -> SearchViewController
-    private var forecasts = [Forecast]()
+    private var forecasts: [Forecast] = []
     
-    init(model: MainModel,
-         searchVC: @escaping () -> SearchViewController) {
+    //MARK: - Init
+    init(model: MainModel, searchVC: @escaping () -> SearchViewController) {
         self.model = model
         self.searchVC = searchVC
         super.init(nibName: nil, bundle: nil)
@@ -44,115 +47,80 @@ final class MainViewController: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-    }
-    
+    //MARK: - ViewController methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        model.requestForAuthorization { status in
-            switch status {
-            case .autorized:
-                getForecastForCurrentLocation()
-            case .denied:
-                showDeniedLocationAlert()
-                getForecastForCurrentLocation()
-            }
-        }
         
         setupNavigationBar()
         setupViews()
         setupConstraints()
-    }
-    
-    private func getForecastForCurrentLocation() {
-        model.getForecastForCurrentLocation { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-                
-            case .success(let forecast):
-                self.model.saveToCache(forecastJson: forecast)
-                self.forecasts.append(Forecast(from: forecast))
-                self.loaderView.stopAnimating()
-                self.collectionView.isHidden = false
-                self.collectionView.reloadData()
-            case .failure(let error):
-                self.model.getForecastFromCache {
-                    self.forecasts = $0.map(Forecast.init)
-                    self.loaderView.stopAnimating()
-                    self.collectionView.isHidden = false
-                    self.collectionView.reloadData()
-                }
+        
+        model.requestForAuthorization { status in
+            if case .denied = status {
+                showDeniedLocationAlert()
             }
-
+            getForecastForCurrentLocation()
         }
     }
     
-    private func showDeniedLocationAlert() {
-        let alertController = UIAlertController (title: "Разрешите геолокацию в настройках приложения", message: "", preferredStyle: .alert)
-
-            let settingsAction = UIAlertAction(title: "Настройки", style: .default) { (_) -> Void in
-
-                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-                    return
-                }
-
-                if UIApplication.shared.canOpenURL(settingsUrl) {
-                    UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
-                        print("Settings opened: \(success)") // Prints true
-                    })
+    //MARK: - Private methods
+    private func getForecastForCurrentLocation() {
+        model.getForecastForCurrentLocation { [weak self] result in
+            switch result {
+            case let .success(forecast):
+                self?.handleForecast(forecast)
+            case let .failure(error):
+                self?.showAlert(message: error.description) { _ in
+                    self?.getForecastFromCache()
                 }
             }
-            alertController.addAction(settingsAction)
-            let cancelAction = UIAlertAction(title: "Отмена", style: .default, handler: nil)
-            alertController.addAction(cancelAction)
-
-            present(alertController, animated: true, completion: nil)
-        
+        }
     }
-
+    
+    private func getForecastFromCache() {
+        model.getForecastFromCache { [weak self] in
+            self?.showAlert(message: "Forecast loaded from cache")
+            self?.forecasts = $0.map(Forecast.init)
+            self?.reloadUI()
+        }
+    }
+    
+    private func handleForecast(_ forecast: GeneralForecast) {
+        model.saveToCache(forecastJson: forecast)
+        forecasts.append(Forecast(from: forecast))
+        reloadUI()
+    }
+    
     private func setupNavigationBar() {
-        
         let button = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonTapped(_:)))
         button.tintColor = .black
-        
-        
         navigationItem.rightBarButtonItem = button
+    }
+    
+    private func reloadUI() {
+        loaderView.stopAnimating()
+        collectionView.isHidden = false
+        collectionView.reloadData()
     }
     
     private func setupViews() {
         view.addSubview(loaderView)
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(ForecastCell.self, forCellWithReuseIdentifier: "ForecastCell")
         view.addSubview(collectionView)
     }
     
     private func setupConstraints() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        loaderView.translatesAutoresizingMaskIntoConstraints = false
-        
+        view.addSubview(loaderView)
+        NSLayoutConstraint.activate([
+            loaderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loaderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        view.addSubview(collectionView)
         NSLayoutConstraint.activate([
             collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
             collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            loaderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loaderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-    
-    func addForecast(_ sender: SearchViewController, forecast: ForecastJson) {
-        self.model.saveToCache(forecastJson: forecast)
-        self.forecasts.append(Forecast(from: forecast))
-        collectionView.reloadData()
-        let indexPath = IndexPath(item: self.forecasts.count - 1, section: 0)
-        collectionView.isPagingEnabled = false
-        collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
-        collectionView.isPagingEnabled = true
     }
     
     @objc
@@ -161,33 +129,83 @@ final class MainViewController: UIViewController,
         searchVC.delegate = self
         show(searchVC, sender: self)
     }
+    
+    //MARK: - SearchViewControllerDelegate
+    func addForecast(_ sender: SearchViewController, forecast: GeneralForecast) {
+        model.saveToCache(forecastJson: forecast)
+        forecasts.append(Forecast(from: forecast))
+        collectionView.reloadData()
+        let indexPath = IndexPath(item: forecasts.count - 1, section: .zero)
+        collectionView.isPagingEnabled = false
+        collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
+        collectionView.isPagingEnabled = true
+    }
 }
 
-extension MainViewController: UICollectionViewDataSource,
-                              UICollectionViewDelegate,
-                              UICollectionViewDelegateFlowLayout {
+//MARK: - UICollectionViewDataSource, UICollectionViewDelegate
+extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCell", for: indexPath) as? ForecastCell else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastViewCell.id,
+                                                            for: indexPath) as? ForecastViewCell else {
+            return UICollectionViewCell()
+        }
         let forecast = forecasts[indexPath.item]
-        cell.setupViews(forecast)
-        
+        cell.setup(forecast)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return forecasts.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return UIScreen.main.bounds.size
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
+        forecasts.count
     }
 }
 
+//MARK: - UICollectionViewDelegateFlowLayout
+extension MainViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        UIScreen.main.bounds.size
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        .zero
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        .zero
+    }
+}
+
+private extension MainViewController {
+    func showDeniedLocationAlert() {
+        let alertController = UIAlertController(title: nil,
+                                                message: "Allow geolocation in settings",
+                                                preferredStyle: .alert)
+        
+        let settingsAction = UIAlertAction(title: "Settings",
+                                           style: .default) { _ in
+            
+            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
+            
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl)
+            }
+        }
+        alertController.addAction(settingsAction)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        alertController.addAction(cancelAction)
+        showDetailViewController(alertController, sender: self)
+    }
+}
