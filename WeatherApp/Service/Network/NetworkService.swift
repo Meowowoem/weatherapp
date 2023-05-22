@@ -20,7 +20,7 @@ final class AlamofireService: Network {
     
     func fetchForecast(lat: Double, lon: Double, completion: @escaping (Result<GeneralForecast, FetchError>) -> Void) {
         guard let urlString = createURLStringForForecast(lat: lat, lon: lon) else { return completion(.failure(.badResponce)) }
-        AF.request(urlString)
+        AF.request(urlString) { $0.timeoutInterval = 15 }
             .validate()
             .response { [weak self] response in
                 self?.handle(response, completion: completion)

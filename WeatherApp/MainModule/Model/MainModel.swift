@@ -52,11 +52,15 @@ final class MainModel {
     
     func requestForAuthorization(completion: @escaping (Result<LocationStatus, FetchError>) -> Void) {
         let status = locationService.getAutorizationStatus()
-        locationService.handlerStatus = { status in
-            if status == .denied {
+        
+        locationService.handlerStatus = {
+            if case .denied = $0 {
                 return completion(.success(.denied))
+            } else {
+                completion(.success(.autorized))
             }
         }
+        
         switch status {
         case .notDetermined:
             locationService.requestForAutorization()

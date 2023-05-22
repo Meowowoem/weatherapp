@@ -280,9 +280,10 @@ private extension MainViewController {
             }
         }
         alertController.addAction(settingsAction)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default) { _ in
-            self.loaderView.stopAnimating()
-            self.noForecastStackView.isHidden = false
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default) { [weak self] _ in
+            self?.loaderView.stopAnimating()
+            self?.noForecastStackView.isHidden = false
+            self?.getForecastForCachedLocation()
         }
         alertController.addAction(cancelAction)
         present(alertController, animated: true, completion: nil)
