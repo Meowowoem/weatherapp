@@ -199,6 +199,7 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
     private func searchButtonTapped(_ sender: UIBarButtonItem) {
         let searchVC = searchVC()
         searchVC.delegate = self
+        searchVC.forecasts = forecasts
         show(searchVC, sender: self)
     }
     

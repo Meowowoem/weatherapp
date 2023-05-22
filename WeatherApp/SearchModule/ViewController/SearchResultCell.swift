@@ -23,15 +23,23 @@ final class SearchResultCell: UITableViewCell {
     
     private let addButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Add", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.setTitleColor(.lightGray, for: .highlighted)
+        button.setImage(UIImage(systemName: "plus.circle"), for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.setTitleColor(.systemBlue.withAlphaComponent(0.3), for: .highlighted)
         return button
+    }()
+    
+    private let emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Empty"
+        return label
     }()
     
     static var id: String {
         String(describing: self)
     }
+    
+    var buttonTapHandler: (() -> ())?
     
     //MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -45,8 +53,17 @@ final class SearchResultCell: UITableViewCell {
     }
     
     //MARK: - Public methods
-    func setupCell(name: String, country: String) {
+    func setupCell(name: String, country: String, completion: @escaping () -> (Void)) {
         nameLabel.text = "\(name), \(country)"
+        addButton.isHidden = false
+        buttonTapHandler = {
+            completion()
+        }
+    }
+    
+    func setupEmpty() {
+        nameLabel.text = "Nothing found"
+        addButton.isHidden = true
     }
     
     //MARK: - Private methods
@@ -54,6 +71,7 @@ final class SearchResultCell: UITableViewCell {
         contentView.addSubview(stackView)
         stackView.addArrangedSubview(nameLabel)
         stackView.addArrangedSubview(addButton)
+        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
     }
     
     private func setupConstraints() {
@@ -63,5 +81,10 @@ final class SearchResultCell: UITableViewCell {
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+    
+    @objc
+    private func addButtonTapped(_ sender: UIButton) {
+        buttonTapHandler!()
     }
 }
