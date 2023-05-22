@@ -99,6 +99,7 @@ extension SearchViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard !cities.isEmpty else { return }
         let city = cities[indexPath.row]
         loadForecastFor(city)
     }

@@ -9,7 +9,6 @@ import Foundation
 import RealmSwift
 
 final class ForecastEntity: Object {
-    @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var cityName: String
     @Persisted var countryName: String
     @Persisted var lat: Double
