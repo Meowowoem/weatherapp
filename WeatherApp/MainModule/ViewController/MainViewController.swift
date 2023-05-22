@@ -26,9 +26,35 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
     
     private let loaderView: UIActivityIndicatorView = {
         let loader = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
-        loader.startAnimating()
         loader.translatesAutoresizingMaskIntoConstraints = false
         return loader
+    }()
+    
+    private let noForecastStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 16
+        stack.alignment = .center
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.isHidden = true
+        return stack
+    }()
+    
+    private let noForecastLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.text = "No forecast"
+        return label
+    }()
+    
+    private let noForecastButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Retry", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.lightGray, for: .highlighted)
+        button.backgroundColor = .black
+        button.layer.cornerRadius = 6
+        return button
     }()
     
     private let model: MainModel
@@ -50,22 +76,28 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
     //MARK: - ViewController methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .white
         setupNavigationBar()
         setupViews()
-        setupConstraints()
         showForecast()
     }
     
     //MARK: - Private methods
     private func showForecast() {
+        noForecastStackView.isHidden = true
+        loaderView.startAnimating()
         getForecastFromCache { [weak self] in
-            self?.model.requestForAuthorization { status in
-                if case .denied = status {
-                    self?.showDeniedLocationAlert()
-                }
-                self?.getForecastForCurrentLocation {
-                    self?.getForecastForCachedLocation()
+            self?.model.requestForAuthorization { result in
+                switch result {
+                case let .success(status):
+                    if case .denied = status {
+                        self?.showDeniedLocationAlert()
+                    }
+                    self?.getForecastForCurrentLocation {
+                        self?.getForecastForCachedLocation()
+                    }
+                case let .failure(error):
+                    self?.showAlert(message: error.description)
                 }
             }
         }
@@ -106,12 +138,12 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
     }
     
     private func showCachedForecast() {
-        if cachedForecasts.isEmpty {
-            showAlert(message: "There is no forecast in the cache. \nTry load forecast from network.") { [weak self] _ in
-                self?.getForecastForCurrentLocation {}
-            }
+        guard !cachedForecasts.isEmpty else {
+            loaderView.stopAnimating()
+            noForecastStackView.isHidden = false
             return
         }
+
         showAlert(message: "Forecast loaded from cache")
         forecasts = cachedForecasts
         reloadUI()
@@ -141,11 +173,14 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
     }
     
     private func setupViews() {
-        view.addSubview(loaderView)
-        view.addSubview(collectionView)
-    }
-    
-    private func setupConstraints() {
+        noForecastStackView.addArrangedSubview(noForecastLabel)
+        noForecastStackView.addArrangedSubview(noForecastButton)
+        noForecastButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
+        view.addSubview(noForecastStackView)
+        NSLayoutConstraint.activate([
+            noForecastStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noForecastStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
         view.addSubview(loaderView)
         NSLayoutConstraint.activate([
             loaderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -165,6 +200,11 @@ final class MainViewController: UIViewController, SearchViewControllerDelegate {
         let searchVC = searchVC()
         searchVC.delegate = self
         show(searchVC, sender: self)
+    }
+    
+    @objc
+    private func retryButtonTapped(_ sender: UIButton) {
+        showForecast()
     }
     
     //MARK: - SearchViewControllerDelegate
@@ -239,9 +279,11 @@ private extension MainViewController {
             }
         }
         alertController.addAction(settingsAction)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default) { _ in
+            self.loaderView.stopAnimating()
+            self.noForecastStackView.isHidden = false
+        }
         alertController.addAction(cancelAction)
         present(alertController, animated: true, completion: nil)
-
     }
 }

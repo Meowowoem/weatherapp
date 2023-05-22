@@ -28,6 +28,7 @@ final class MainModel {
     }
     
     func getForecastForCurrentLocation(completion: @escaping (Result<GeneralForecast, FetchError>) -> Void) {
+        guard locationService.unknownLocation == false else { return  completion(.failure(.locationFailed)) }
         locationService.handlerLocation = { [weak self] location in
             let lat = location.coordinate.latitude
             let lon = location.coordinate.longitude
@@ -49,19 +50,23 @@ final class MainModel {
         storageService.add(forecastJson: forecastJson)
     }
     
-    func requestForAuthorization(completion: (LocationStatus) -> Void) {
+    func requestForAuthorization(completion: @escaping (Result<LocationStatus, FetchError>) -> Void) {
         let status = locationService.getAutorizationStatus()
-        
+        locationService.handlerStatus = { status in
+            if status == .denied {
+                return completion(.success(.denied))
+            }
+        }
         switch status {
         case .notDetermined:
             locationService.requestForAutorization()
-            completion(.autorized)
+            completion(.success(.autorized))
         case .restricted, .denied:
-            completion(.denied)
+            completion(.success(.denied))
         case .authorizedWhenInUse, .authorizedAlways:
-            completion(.autorized)
+            completion(.success(.autorized))
         @unknown default:
-            completion(.denied)
+            completion(.failure(.locationFailed))
         }
     }
 }

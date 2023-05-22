@@ -12,6 +12,8 @@ final class LocationService: NSObject,
                              Location {
     private let locationManager = CLLocationManager()
     var handlerLocation: ((CLLocation) -> ())?
+    var handlerStatus: ((CLAuthorizationStatus) -> ())?
+    var unknownLocation = false
     
     override init() {
         super.init()
@@ -34,14 +36,21 @@ final class LocationService: NSObject,
 extension LocationService: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager,
                          didUpdateLocations locations: [CLLocation]) {
+        unknownLocation = false
         guard let location = locations.first,
               let handler = handlerLocation else { return }
         handler(location)
         locationManager.stopUpdatingLocation()
     }
     
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        unknownLocation = true
+    }
+    
     func locationManager(_ manager: CLLocationManager,
                          didChangeAuthorization status: CLAuthorizationStatus) {
+        unknownLocation = false
+        handlerStatus?(status)
         guard status == .notDetermined else { return }
         requestForAutorization()
     }

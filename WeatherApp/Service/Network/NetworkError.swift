@@ -8,7 +8,7 @@
 import Foundation
 
 enum FetchError: LocalizedError {
-    case badResponce, networkFailure, decodingFailure, invalidData, unknown
+    case badResponce, networkFailure, decodingFailure, invalidData, locationFailed, unknown
 }
 
 extension FetchError: CustomStringConvertible {
@@ -22,6 +22,8 @@ extension FetchError: CustomStringConvertible {
             return "Decoding error"
         case .invalidData:
             return "Invalid data"
+        case .locationFailed:
+            return "Error in determining geolocation"
         case .unknown:
             return "Unknown error"
         }
